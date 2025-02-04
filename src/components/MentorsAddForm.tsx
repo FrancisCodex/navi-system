@@ -7,19 +7,25 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 
 interface Mentors {
-  name: string
+  firstName: string
+  lastName: string
   organization: string
   expertise: string
+  email: string
+  phone: string
   yearsOfExperience: string
 }
 
 export default function MentorsForm() {
   const [Mentorss, setMentorss] = useState<Mentors[]>([])
   const [formData, setFormData] = useState<Mentors>({
-    name: "",
+    firstName: "",
+    lastName: "",
     organization: "",
     expertise: "",
     yearsOfExperience: "",
+    email: "",
+    phone: "",
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,15 +40,44 @@ export default function MentorsForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setMentorss((prevMentorss) => [...prevMentorss, formData])
-    setFormData({ name: "", organization: "", expertise: "", yearsOfExperience: "" })
+    setFormData({ firstName: "", lastName: "", organization: "", expertise: "", yearsOfExperience: "", email: "", phone: "" })
   }
 
   return (
-    <div className="mx-auto max-w-md">
+    <div className="w-full">
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex justify-between gap-5">
+            <div className="w-full">
+            <Label htmlFor="name">First Name</Label>
+            <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
+            </div>
+            <div className="w-full">
+            <Label htmlFor="name">Last Name</Label>
+            <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleInputChange} required />
+            </div>
+           
+          </div>
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="organization">Organization</Label>
@@ -66,6 +101,7 @@ export default function MentorsForm() {
                 <SelectItem value="fullstack">Full Stack Development</SelectItem>
                 <SelectItem value="design">UI/UX Design</SelectItem>
                 <SelectItem value="devops">DevOps</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>

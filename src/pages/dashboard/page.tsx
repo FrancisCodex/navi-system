@@ -1,7 +1,6 @@
 import DashboardTables from "@/components/dashboard_tables"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { CalendarDays, GraduationCap, School, Users } from "lucide-react"
-import { AppointmentCalendar } from "@/components/appointment-calendar"
 import { NotificationList } from "@/components/notification-list"
 import { StudentsList } from "@/components/students-list"
 import { Button } from "@/components/ui/button"
@@ -59,20 +58,11 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle>Calendar</CardTitle>
-              <CardDescription>View and manage upcoming appointments</CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-              <AppointmentCalendar />
-            </CardContent>
-          </Card>
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
           <Card className="">
             <CardHeader className="flex flex-row justify-between">
               <div>
-              <CardTitle>Notifications</CardTitle>
+              <CardTitle>Appointments</CardTitle>
               <CardDescription>Recent appointment requests</CardDescription>
               </div>
               <Button variant="link" size="sm">View all</Button>

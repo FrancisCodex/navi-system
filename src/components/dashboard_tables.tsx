@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pen, FileText, Trash } from 'lucide-react';
+import { Pen, Trash } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -42,29 +42,29 @@ const DashboardTables = () => {
     <div className="w-full box-border">
       <div className='flex justify-between pb-2'>
             <h1 className=''>List of Mentor's</h1>
-            <a href="/dashboard/add/mentors" className='text-end text-primary'>
-            <Button size="sm" className='bg-blue-950 hover:bg-blue-900'>Add Mentor</Button>
+            <a href="/dashboard/mentors" className='text-end text-primary'>
+            <Button variant="link" size='sm'>View All</Button>
             </a>
           </div>
           <div className="rounded-lg border max-w-[100vw] overflow-x-auto">
             <Table className="min-w-[800px] bg-card">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Organization</TableHead>
-                  <TableHead>Expertise</TableHead>
-                  <TableHead>Experience</TableHead>
-                  <TableHead className="w-fit">Actions</TableHead>
+                  <TableHead className='text-center'>Name</TableHead>
+                  <TableHead className='text-center'>Organization</TableHead>
+                  <TableHead className='text-center'>Expertise</TableHead>
+                  <TableHead className='text-center'>Experience</TableHead>
+                  <TableHead className="text-center w-fit">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {currentmentorss.map((item) => (
-                  <TableRow key={item.id}>
+                  <TableRow key={item.id} className="text-center">
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>{item.email}</TableCell>
                     <TableCell>{item.organization}</TableCell>
                     <TableCell>{item.expertise}</TableCell>
-                    <TableCell>
+                    <TableCell className='flex justify-center'>
                       <div className="flex gap-1">
                         <TooltipProvider>
                         <Tooltip>
