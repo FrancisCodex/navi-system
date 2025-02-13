@@ -65,7 +65,9 @@ const Dashboard = () => {
               <CardTitle>Appointments</CardTitle>
               <CardDescription>Recent appointment requests</CardDescription>
               </div>
+              <a href="/dashboard/appointments">
               <Button variant="link" size="sm">View all</Button>
+              </a>
             </CardHeader>
             <CardContent>
               <NotificationList />
@@ -77,7 +79,9 @@ const Dashboard = () => {
               <CardTitle>Incubatee</CardTitle>
               <CardDescription>List of active Incubatee</CardDescription>
               </div>
+              <a href="/dashboard/incubatees">
               <Button variant="link" size="sm">View all</Button>
+              </a>
             </CardHeader>
             <CardContent>
               <StudentsList />

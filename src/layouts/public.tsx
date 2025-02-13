@@ -8,7 +8,7 @@ interface PublicLayoutProps {
 const PublicLayout = ({ children }: PublicLayoutProps) => {
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       {/* This layout is for public no authorization */}
       <main>
         {children}

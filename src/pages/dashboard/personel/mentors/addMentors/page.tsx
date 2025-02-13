@@ -8,7 +8,7 @@ const AddMentors = () => {
           <div className="text-center">
             <h1 className="text-2xl font-bold">Add Mentors</h1>
           </div>
-            <MentorsForm/>
+            {/* <MentorsForm/> */}
         </div>
     </div>
   )

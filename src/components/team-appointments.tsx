@@ -9,7 +9,7 @@ const appointments = [
     id: 1,
     teacher: {
       name: "Dr. Smith",
-      subject: "Mathematics",
+      subject: "Company 1",
       image: "/placeholder.svg?height=40&width=40",
     },
     status: "upcoming",
@@ -20,7 +20,7 @@ const appointments = [
     id: 2,
     teacher: {
       name: "Mrs. Davis",
-      subject: "English",
+      subject: "Company 2",
       image: "/placeholder.svg?height=40&width=40",
     },
     status: "completed",
@@ -31,7 +31,7 @@ const appointments = [
     id: 3,
     teacher: {
       name: "Mr. Anderson",
-      subject: "Physics",
+      subject: "Company 3",
       image: "/placeholder.svg?height=40&width=40",
     },
     status: "cancelled",

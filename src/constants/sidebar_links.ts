@@ -14,8 +14,21 @@ const SidebarLinks = [
   },
   {
     title: 'Activities',
-    url: '/dashboard/activities',
     icon: Book,
+    items: [
+      {
+        title: 'Add Activity',
+        url: '/dashboard/activities/add',
+      },
+      {
+        title: 'Check Activity',
+        url: '/dashboard/activities/check',
+      },
+      {
+        title: 'Completed',
+        url: '/dashboard/activities/completed',
+      },
+    ],
   },
   {
     title: 'Appointments',

@@ -5,6 +5,7 @@ interface Appointment {
   subject: string
   date: Date
   status: string
+  requestedAt: Date
 }
 
 const appointments: Appointment[] = [
@@ -15,6 +16,7 @@ const appointments: Appointment[] = [
     subject: "Math",
     date: new Date(2025, 1, 20),
     status: "pending",
+    requestedAt: new Date(2025, 1, 15),
   },
   {
     id: 2,
@@ -23,6 +25,7 @@ const appointments: Appointment[] = [
     subject: "English",
     date: new Date(2025, 1, 23),
     status: "accepted",
+    requestedAt: new Date(2025, 1, 18),
   },
   {
     id: 3,
@@ -31,6 +34,7 @@ const appointments: Appointment[] = [
     subject: "Physics",
     date: new Date(2025, 1, 25),
     status: "pending",
+    requestedAt: new Date(2025, 1, 20),
   },
     {
         id: 4,
@@ -39,6 +43,7 @@ const appointments: Appointment[] = [
         subject: "Chemistry",
         date: new Date(2025, 1, 25),
         status: "accepted",
+        requestedAt: new Date(2025, 1, 20),
     },
     {
         id: 5,
@@ -47,6 +52,7 @@ const appointments: Appointment[] = [
         subject: "Biology",
         date: new Date(2025, 1, 28),
         status: "declined",
+        requestedAt: new Date(2025, 1, 23),
     },
 
 ]
