@@ -1,16 +1,16 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { DashNavbar } from "@/components/dashnav"
 import { Separator } from "@/components/ui/separator"
+import { LoaderCircle } from "lucide-react"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from '@/context/AuthProvider'
 import { ReactNode } from "react"
 import IncubateeNavLinks from "@/constants/incubatee_link"
 import SidebarLinks from "@/constants/sidebar_links"
-import Loading from "@/components/loading"
 
 interface PrivateLayoutProps {
   children: ReactNode
@@ -20,7 +20,9 @@ const PrivateLayout = ({ children }: PrivateLayoutProps) => {
   const { user, loading } = useAuth()
 
   if (loading) {
-    return <div><Loading/></div>
+    return <div className="flex justify-center items-center h-screen">
+      <LoaderCircle className="animate-spin h-6 w-6" />
+    </div>
   }
 
   let navLinks: any[] = [];

@@ -1,100 +1,73 @@
-import DashboardTables from "@/components/dashboard_tables"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CalendarDays, GraduationCap, School, Users } from "lucide-react"
-import { NotificationList } from "@/components/notification-list"
-import { StudentsList } from "@/components/students-list"
-import { Button } from "@/components/ui/button"
-import { TeachersList } from "@/components/teachers-list"
+import React, { useEffect, useState, useMemo, Suspense } from "react";
+import { LoaderCircle } from "lucide-react";
+import { AppointmentsList } from "@/components/dashboard/appointments-list";
+import { ActivityCard } from "@/components/dashboard/activity-card";
+import { useActivities } from "@/hooks/use-activities";
+import { useAppointment } from "@/hooks/use-appointment";
+import { useStartupProfile } from "@/hooks/use-startup-profile";
+import { useMentor } from "@/hooks/create-mentor";
+
+const AdminDashboardTabs = React.lazy(() => 
+  import("@/components/dashboard/admin-dashboard-tabs").then(module => ({ default: module.default }))
+);
 
 const Dashboard = () => {
+  const { getActivitiesReport } = useActivities();
+  const { appointments, fetchAppointments } = useAppointment();
+  const { startupProfiles, fetchStartupProfiles } = useStartupProfile();
+  const { mentors, viewAllMentors } = useMentor();
+  const [combinedActivities, setCombinedActivities] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [appointmentsData, startupProfilesData, mentorsData, activitiesReport] = await Promise.all([
+          fetchAppointments(),
+          fetchStartupProfiles(),
+          viewAllMentors(),
+          getActivitiesReport(),
+        ]);
+        setCombinedActivities(activitiesReport);
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [fetchAppointments, fetchStartupProfiles, viewAllMentors, getActivitiesReport]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoaderCircle className="animate-spin h-6 w-6" />
+      </div>
+    );
+  }
+
   return (
-    <div className=''>
-      <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col">
       <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <h1 className="ml-2 text-lg font-semibold">Dashboard</h1>
         </div>
       </div>
       <div className="flex-1 space-y-4 p-8">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Mentors</CardTitle>
-              <GraduationCap className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground">+2 from last Quarter</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Incubatees</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">5</div>
-              <p className="text-xs text-muted-foreground">+1 from last Quarter</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Appointments</CardTitle>
-              <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">24</div>
-              <p className="text-xs text-muted-foreground">+5 since yesterday</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
-              <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">21</div>
-              <p className="text-xs text-muted-foreground">+5 from last month</p>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-          <Card className="">
-            <CardHeader className="flex flex-row justify-between">
-              <div>
-              <CardTitle>Appointments</CardTitle>
-              <CardDescription>Recent appointment requests</CardDescription>
-              </div>
-              <a href="/dashboard/appointments">
-              <Button variant="link" size="sm">View all</Button>
-              </a>
-            </CardHeader>
-            <CardContent>
-              <NotificationList />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row justify-between">
-              <div>
-              <CardTitle>Incubatee</CardTitle>
-              <CardDescription>List of active Incubatee</CardDescription>
-              </div>
-              <a href="/dashboard/incubatees">
-              <Button variant="link" size="sm">View all</Button>
-              </a>
-            </CardHeader>
-            <CardContent>
-              <StudentsList />
-            </CardContent>
-          </Card>
+        <div className="grid gap-6 md:grid-cols-2">
+          <AppointmentsList appointments={appointments} />
+          <ActivityCard activities={combinedActivities} />
         </div>
       </div>
-      <div className='p-8'>
-            <DashboardTables/>
+      <div className="p-8">
+        <Suspense fallback={<LoaderCircle className="animate-spin h-6 w-6" />}>
+          <AdminDashboardTabs startupGroups={startupProfiles} mentors={mentors} />
+        </Suspense>
       </div>
     </div>
-    </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

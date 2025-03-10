@@ -4,16 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useMentor } from "@/hooks/create-mentor"
-
-interface Mentor {
-  firstName: string
-  lastName: string
-  organization: string
-  expertise: string
-  email: string
-  phoneNumber: string
-  yearsOfExperience: number
-}
+import type { Mentor } from "@/constants/types"
 
 interface MentorsFormProps {
   onSuccess: () => void

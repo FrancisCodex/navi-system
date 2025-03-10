@@ -17,22 +17,15 @@ interface Mentor {
   image?: string
 }
 
-
 const SetAppointments = () => {
   const { mentors, loading: mentorsLoading, error, viewAllMentors } = useMentor()
-  const { appointments, fetchAppointments, deleteAppointment, loading: appointmentsLoading } = useAppointment()
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { appointments, fetchAppointments, cancelAppointment, loading: appointmentsLoading } = useAppointment()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   useEffect(() => {
     viewAllMentors()
     fetchAppointments()
   }, [viewAllMentors, fetchAppointments])
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false)
-    viewAllMentors() // Refresh the mentor list
-  }
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -41,10 +34,17 @@ const SetAppointments = () => {
     setIsRefreshing(false)
   }
 
+
+  const handleBookingSuccess = async () => {
+    await fetchAppointments() // Fetch updated appointments after booking
+  }
+
   if ((mentorsLoading || appointmentsLoading) && !isRefreshing) {
-    return <div className="flex justify-center items-center h-64">
-      <LoaderCircle className="animate-spin h-6 w-6" />
-    </div>
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoaderCircle className="animate-spin h-6 w-6" />
+      </div>
+    )
   }
 
   return (
@@ -58,12 +58,12 @@ const SetAppointments = () => {
         <TabsContent value="book">
           <div className="flex-col space-y-4">
             {mentors && mentors.map((mentor: Mentor) => (
-              <IncubateeMentorList key={mentor.id} mentor={mentor} />
+              <IncubateeMentorList key={mentor.id} mentor={mentor} onBookingSuccess={handleBookingSuccess} />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="my-appointments">
-          <MyAppointments appointments={appointments} onCancelAppointment={deleteAppointment} />
+          <MyAppointments appointments={appointments} onCancelAppointment={cancelAppointment} />
         </TabsContent>
       </Tabs>
     </div>

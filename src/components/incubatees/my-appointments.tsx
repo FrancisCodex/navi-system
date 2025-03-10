@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge"
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
@@ -12,16 +13,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-
-interface Appointment {
-    id: string;
-    mentor_id: string;
-    incubateeName?: string;
-    mentorName?: string;
-    date: string;
-    requestedAt?: Date;
-    status?: "pending" | "accepted" | "declined" | "completed" | "cancelled";
-}
+import { useAppointment } from "@/hooks/use-appointment"
+import type { Appointment } from "@/constants/types"
 
 interface MyAppointmentsProps {
   appointments: Appointment[]
@@ -29,9 +22,26 @@ interface MyAppointmentsProps {
 }
 
 export function MyAppointments({ appointments, onCancelAppointment }: MyAppointmentsProps) {
+  const { fetchAppointments } = useAppointment()
+  useEffect(() => {
+    fetchAppointments()
+  }, [appointments])
   const pendingAppointments = appointments.filter((app) => app.status === "pending" || app.status === "accepted")
   const pastAppointments = appointments.filter((app) => app.status === "completed" || app.status === "cancelled")
-
+  const BadgeStatus = ({ status }: { status: Appointment["status"] }) => {
+          switch (status) {
+              case "pending":
+                  return <Badge variant='outline' className="text-xs">Pending</Badge>
+              case "accepted":
+                  return <Badge className="text-xs bg-green-500 hover:bg-green-600">Accepted</Badge>
+              case "declined":
+                  return <Badge variant='destructive' className="text-xs">Declined</Badge>
+              case "completed":
+                  return <Badge className="text-xs">Completed</Badge>
+              case "cancelled":
+                  return <Badge variant='destructive' className="text-xs">Cancelled</Badge>
+              }
+          }
   const renderAppointmentTable = (apps: Appointment[]) => (
     <Table>
       <TableHeader>
@@ -45,12 +55,10 @@ export function MyAppointments({ appointments, onCancelAppointment }: MyAppointm
       <TableBody>
         {apps.map((appointment) => (
           <TableRow key={appointment.id}>
-            <TableCell>{appointment.mentor_id}</TableCell>
+            <TableCell>{appointment.mentorName}</TableCell>
             <TableCell>{new Date(appointment.date).toLocaleString()}</TableCell>
             <TableCell>
-              <Badge>
-                {appointment.status}
-              </Badge>
+              <BadgeStatus status={appointment.status} />
             </TableCell>
             <TableCell>
               {(appointment.status === "pending" || appointment.status === "accepted") && (

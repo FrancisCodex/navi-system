@@ -13,36 +13,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAppointment } from "@/hooks/use-appointment"
 import { format } from "date-fns"
-
-interface Mentor {
-  id: string
-  firstName: string
-  lastName: string
-  expertise: string
-}
+import type { Mentor } from "@/constants/types"
 
 interface AppointmentBookingProps {
   mentor: Mentor
   onCancel: () => void
+  onBookingSuccess: () => void
 }
 
-export function AppointmentBooking({ mentor, onCancel }: AppointmentBookingProps) {
-  const { createAppointment } = useAppointment()
+export function AppointmentBooking({ mentor, onCancel, onBookingSuccess }: AppointmentBookingProps) {
+  const { createAppointment, loading } = useAppointment()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [notes, setNotes] = useState("")
-
   const handleBookAppointment = async () => {
     if (selectedDate) {
       const appointmentData = {
         mentor_id: mentor.id,
         date: format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss.ssXXX"),
+        notes,
       }
       await createAppointment(appointmentData)
+      onBookingSuccess()
       onCancel()
     }
   }
-
-  console.log(selectedDate)
 
   return (
     <Dialog open={true} onOpenChange={onCancel}>
@@ -54,7 +48,7 @@ export function AppointmentBooking({ mentor, onCancel }: AppointmentBookingProps
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} className="rounded-md border justify-self-center" />
+          <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} disabled={(date) => date < new Date()} className="rounded-md border justify-self-center" />
           <div className="grid gap-2">
             <Label htmlFor="notes">Notes (optional)</Label>
             <Input
@@ -69,8 +63,8 @@ export function AppointmentBooking({ mentor, onCancel }: AppointmentBookingProps
           <Button onClick={onCancel} variant="outline">
             Cancel
           </Button>
-          <Button onClick={handleBookAppointment} disabled={!selectedDate}>
-            Book Appointment
+          <Button onClick={handleBookAppointment} disabled={!selectedDate || loading}>
+            {loading ? "Booking..." : "Book Appointment"}
           </Button>
         </DialogFooter>
       </DialogContent>

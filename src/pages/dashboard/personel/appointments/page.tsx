@@ -4,16 +4,10 @@ import { AddEventForm } from "@/components/add-event-form"
 import { AppointmentList } from "@/components/appointments/appointment-list"
 import { useAppointment } from "@/hooks/use-appointment"
 import { LoaderCircle } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { AppointmentsListing } from "@/components/appointments/appointments";
+import { Separator } from "@/components/ui/separator"
 
-interface Appointment {
-  id: string;
-  mentor_id: string;
-  incubateeName?: string;
-  mentorName?: string;
-  date: string;
-  requestedAt?: Date;
-  status?: "pending" | "accepted" | "declined" | "completed" | "cancelled"
-}
 
 export default function Appointments() {
   const { appointments, fetchAppointments, updateAppointment, deleteAppointment, loading, error } = useAppointment()
@@ -43,15 +37,11 @@ export default function Appointments() {
     console.log(`Sending email to ${teacherName}`)
   }
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-64">
-      <LoaderCircle className="animate-spin h-6 w-6" />
-    </div>
-  }
-
   if (error) {
     return <div>Error: {error}</div>
   }
+
+  console.log(appointments)
 
   return (
     <div className="p-4">
@@ -60,7 +50,7 @@ export default function Appointments() {
           <CalendarAppointment appointments={appointments} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold mb-4">Mentor Appointments</h1>
+          {/* <h1 className="text-2xl font-bold mb-4">Mentor Appointments</h1>
           <AppointmentList
             appointments={appointments}
             onAcceptAppointment={handleAcceptAppointment}
@@ -68,7 +58,27 @@ export default function Appointments() {
             onCompleteAppointment={handleCompleteAppointment}
             onDeleteAppointment={handleDeleteAppointment}
             onSendEmail={handleSendEmail}
-          />
+          /> */}
+          <Card className="">
+            <CardHeader className="flex flex-row justify-between">
+              <div>
+              <CardTitle>Appointments</CardTitle>
+              <CardDescription>Recent appointment requests</CardDescription>
+              </div>
+            </CardHeader>
+            <Separator/>
+            <CardContent className="pt-5">
+              <AppointmentsListing
+                appointments={appointments}
+                onAcceptAppointment={handleAcceptAppointment}
+                onDeclineAppointment={handleDeclineAppointment}
+                onCompleteAppointment={handleCompleteAppointment}
+                onDeleteAppointment={handleDeleteAppointment}
+                onSendEmail={handleSendEmail}
+              />
+            </CardContent>
+          </Card>
+
         </div>
       </div>
     </div>

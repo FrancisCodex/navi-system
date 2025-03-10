@@ -5,23 +5,14 @@ import { CalendarPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useMentor } from "@/hooks/create-mentor"
 import { AppointmentBooking } from "./appointment-booking"
-
-interface Mentor {
-  id: string
-  firstName: string
-  lastName: string
-  organization: string
-  expertise: string
-  yearsOfExperience: number
-  email: string
-  image?: string
-}
+import type { Mentor } from "@/constants/types"
 
 interface MentorCardProps {
   mentor: Mentor
+  onBookingSuccess: () => void // Add this prop
 }
 
-export function IncubateeMentorList({ mentor }: MentorCardProps): JSX.Element {
+export function IncubateeMentorList({ mentor, onBookingSuccess }: MentorCardProps): JSX.Element {
   const { viewAllMentors } = useMentor()
   const [isBookingOpen, setIsBookingOpen] = useState(false)
 
@@ -40,7 +31,6 @@ export function IncubateeMentorList({ mentor }: MentorCardProps): JSX.Element {
           <div className="flex justify-between items-center">
             <div className="flex space-x-2">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={mentor.image} alt={mentor.firstName} />
                 <AvatarFallback>{mentor.firstName[0]}</AvatarFallback>
               </Avatar>
               <div className="ml-4">
@@ -75,7 +65,7 @@ export function IncubateeMentorList({ mentor }: MentorCardProps): JSX.Element {
         </CardContent>
       </Card>
       {isBookingOpen && (
-        <AppointmentBooking mentor={mentor} onCancel={handleCloseBooking} />
+        <AppointmentBooking mentor={mentor} onCancel={handleCloseBooking} onBookingSuccess={onBookingSuccess} />
       )}
     </>
   )

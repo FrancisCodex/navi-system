@@ -10,7 +10,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { useAuth } from '@/hooks/use-auth'
+import { useAuth } from '@/context/AuthProvider'
 import { useNavigate } from "react-router-dom"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {

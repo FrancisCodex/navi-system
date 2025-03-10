@@ -3,14 +3,15 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
 
 interface Appointment {
   id: string
-  mentor_id: string
   incubateeName?: string
   mentorName?: string
+  mentor_expertise?: string
   date: string
-  requestedAt?: Date
+  requestedAt?: string
   status?: "pending" | "accepted" | "declined" | "completed" | "cancelled"
 }
 
@@ -34,6 +35,8 @@ export default function CalendarAppointment({ appointments }: CalendarAppointmen
 
   const renderCalendarDays = () => {
     const days = []
+    const today = new Date()
+
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(<TableCell key={`empty-${i}`} className="h-16 w-16 align-top p-1 border" />)
     }
@@ -41,40 +44,61 @@ export default function CalendarAppointment({ appointments }: CalendarAppointmen
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
       const appointmentsOnDate = appointments.filter((a) => new Date(a.date).toDateString() === date.toDateString())
       const hasAppointments = appointmentsOnDate.length > 0
+      const isPastDate = date < today
+      const allAppointmentsCancelledOrCompleted = appointmentsOnDate.every(
+        (a) => a.status === "cancelled" || a.status === "completed"
+      )
+
       days.push(
         <TableCell key={day} className="h-16 w-16 align-top p-1 border">
-          <Dialog>
-            <DialogTrigger asChild>
-              <div className="h-full w-full flex items-center justify-center">
-                <Button
-                  variant={hasAppointments ? "default" : "ghost"}
-                  className={`w-10 md:w-full h-full flex flex-col items-center justify-center ${hasAppointments ? "bg-primary text-primary-foreground" : ""}`}
-                >
-                  <span className="font-semibold">{day}</span>
-                  {hasAppointments && <span className="text-xs">View</span>}
-                </Button>
-              </div>
-            </DialogTrigger>
-            <DialogContent className="w-[90%] md:w-full overflow-y-auto h-[400px] p-10">
-              <DialogHeader>
-                <DialogTitle>Appointments for {date.toDateString()}</DialogTitle>
-              </DialogHeader>
-              {appointmentsOnDate.length > 0 ? (
-                appointmentsOnDate.map((appointment) => (
-                  <div key={appointment.id} className="p-2 border-b">
-                    <p>
-                      <strong>Incubatee:</strong> {appointment.incubateeName}
-                    </p>
-                    <p>
-                      <strong>Mentor:</strong> {appointment.mentorName}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p>No appointments on this day</p>
-              )}
-            </DialogContent>
-          </Dialog>
+          {isPastDate ? (
+            <div className="h-full w-full flex items-center justify-center">
+              <Button
+                variant="ghost"
+                className="w-10 md:w-full h-full flex flex-col items-center justify-center"
+                disabled
+              >
+                <span className="font-semibold">{day}</span>
+              </Button>
+            </div>
+          ) : (
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="h-full w-full flex items-center justify-center">
+                  <Button
+                    variant={hasAppointments && !allAppointmentsCancelledOrCompleted ? "default" : "ghost"}
+                    className={`w-10 md:w-full h-full flex flex-col items-center justify-center ${hasAppointments && !allAppointmentsCancelledOrCompleted ? "bg-primary text-primary-foreground" : ""}`}
+                  >
+                    <span className="font-semibold">{day}</span>
+                    {hasAppointments && !allAppointmentsCancelledOrCompleted && <span className="text-xs">View</span>}
+                  </Button>
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Appointments for {date.toDateString()}</DialogTitle>
+                </DialogHeader>
+                {appointmentsOnDate.length > 0 ? (
+                  appointmentsOnDate.map((appointment) => (
+                    <div key={appointment.id} className="p-2 border-b">
+                      <p>
+                        <strong>Incubatee:</strong> {appointment.incubateeName}
+                      </p>
+                      <p>
+                        <strong>Mentor:</strong> {appointment.mentorName}
+                      </p>
+                      <p>
+                        <strong>Status: </strong>
+                        <Badge>{appointment.status}</Badge>
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p>No appointments on this day</p>
+                )}
+              </DialogContent>
+            </Dialog>
+          )}
         </TableCell>,
       )
     }

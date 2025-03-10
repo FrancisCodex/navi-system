@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, BookOpen, Settings2, ClipboardEdit, Book } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, Egg, ClipboardEdit, Book } from 'lucide-react';
 
 const IncubateeNavLinks = [
   {
@@ -21,6 +21,11 @@ const IncubateeNavLinks = [
     title: 'Mentors',
     url: '/incubatees/mentors',
     icon: BookOpen,
+  },
+  {
+    title: 'My Startup',
+    url: '/incubatees/myteam',
+    icon: Egg,
   }
 ];
 

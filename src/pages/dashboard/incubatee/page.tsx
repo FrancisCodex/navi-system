@@ -1,158 +1,108 @@
-import { useState, ChangeEvent } from "react"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useEffect } from "react"
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
-import { Upload } from "lucide-react"
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DashboardHeader } from "@/components/dashboard-header"
+import { StartupCard } from "@/components/startupProfiles/startup-card"
+import { Search, Plus, UserPlus, LoaderCircle } from "lucide-react"
+import { useStartupProfile } from "@/hooks/use-startup-profile"
 
-interface Action {
-  id: number
-  module: string
-  session: string
-  activityName: string
-  speaker: string
-  tbi: string
-  file: File | null
-}
+export default function IncubateeStartupDetails() {
+  const { fetchStartupProfiles, loading, startupProfiles } = useStartupProfile()
 
-// Mock data for incubatee actions
-const mockActions: Action[] = [
-  {
-    id: 1,
-    module: "Module 1",
-    session: "Session 1",
-    activityName: "Activity 1",
-    speaker: "John Doe",
-    tbi: "Navigatu",
-    file: null,
-  },
-  {
-    id: 2,
-    module: "Module 2",
-    session: "Session 2",
-    activityName: "Activity 2",
-    speaker: "Jane Smith",
-    tbi: "Tara",
-    file: null,
-  },
-]
+  useEffect(() => {
+    fetchStartupProfiles()
+  }, [fetchStartupProfiles])
 
-export default function IncubateeDashboardPage() {
-  const [actions, setActions] = useState<Action[]>(mockActions)
-  const [searchTerm, setSearchTerm] = useState<string>("")
-  const [selectedActionId, setSelectedActionId] = useState<number | null>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-
-  const handleFileUpload = (actionId: number, file: File) => {
-    setActions(actions.map((action) => (action.id === actionId ? { ...action, file: file } : action)))
-    toast.success('Login successful');
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoaderCircle className="animate-spin h-6 w-6" />
+      </div>
+    );
   }
 
-  const filteredActions = actions.filter(
-    (action) =>
-      action.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      action.session.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      action.speaker.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
-
   return (
-    <div className="space-y-4 p-8">
-      <h1 className="text-3xl font-bold">Incubatee Dashboard</h1>
-      <Input
-        placeholder="Search by Module, Session, or Speaker..."
-        value={searchTerm}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-        className="max-w-sm"
-      />
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Module</TableHead>
-            <TableHead>Session</TableHead>
-            <TableHead>Activity Name</TableHead>
-            <TableHead>Speaker</TableHead>
-            <TableHead>TBI</TableHead>
-            <TableHead>File</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredActions.map((action) => (
-            <TableRow key={action.id}>
-              <TableCell>{action.module}</TableCell>
-              <TableCell>{action.session}</TableCell>
-              <TableCell>{action.activityName}</TableCell>
-              <TableCell>{action.speaker}</TableCell>
-              <TableCell>{action.tbi}</TableCell>
-              <TableCell>
-                {action.file ? (
-                  <span className="text-sm text-muted-foreground">{action.file.name}</span>
-                ) : (
-                  <span className="text-sm text-muted-foreground">No file</span>
-                )}
-              </TableCell>
-              <TableCell>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2"
-                      onClick={() => setSelectedActionId(action.id)}
-                    >
-                      <Upload className="h-4 w-4" />
-                      {action.file ? "Change File" : "Attach File"}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Upload File</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Label htmlFor="file">Select File</Label>
-                        <Input
-                          id="file"
-                          type="file"
-                          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                            const file = e.target.files?.[0]
-                            if (file) {
-                              setSelectedFile(file)
-                            }
-                          }}
-                        />
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Supported file types: PDF, DOC, DOCX, XLS, XLSX
-                      </div>
-                      <div className="flex justify-end space-x-2">
-                        <DialogClose asChild>
-                          <Button variant="outline" onClick={() => setSelectedFile(null)}>
-                            Cancel
-                          </Button>
-                        </DialogClose>
-                        <Button
-                          onClick={() => {
-                            if (selectedFile && selectedActionId !== null) {
-                              handleFileUpload(selectedActionId, selectedFile)
-                              setSelectedFile(null)
-                            }
-                          }}
-                          disabled={!selectedFile}
-                        >
-                          Submit
-                        </Button>
-                      </div>
+    <div className="p-10">
+      <DashboardHeader heading="Startup Groups" text="Manage all your startup groups in one place.">
+        <div className="flex gap-2">
+          <Link to="/dashboard/leaders/new">
+            <Button variant="outline">
+              <UserPlus className="mr-2 h-4 w-4" />
+              Add Leader
+            </Button>
+          </Link>
+          <Link to="new">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Startup
+            </Button>
+          </Link>
+        </div>
+      </DashboardHeader>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input type="search" placeholder="Search startups..." className="w-full pl-8" />
+          </div>
+          <Tabs defaultValue="all" className="w-auto">
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="active">Active</TabsTrigger>
+              <TabsTrigger value="inactive">Inactive</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
+        <Tabs defaultValue="grid" className="w-full">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-muted-foreground">
+              Showing <strong>{startupProfiles.length}</strong> startups
+            </div>
+            <TabsList>
+              <TabsTrigger value="grid">Grid</TabsTrigger>
+              <TabsTrigger value="list">List</TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="grid" className="mt-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {startupProfiles.map((startup) => (
+                <StartupCard key={startup.id} startup={{ ...startup, total_members: startup.total_members || "0" }} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="list" className="mt-6">
+            <div className="space-y-4">
+              {startupProfiles.map((startup) => (
+                <Card key={startup.id}>
+                  <CardHeader className="flex flex-row items-center gap-4 p-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      {startup.startup_name.charAt(0)}
                     </div>
-                  </DialogContent>
-                </Dialog>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                    <div>
+                      <CardTitle>{startup.startup_name}</CardTitle>
+                      <CardDescription>{startup.industry}</CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardFooter className="p-4 pt-0 flex justify-between">
+                    <div className="text-sm text-muted-foreground">{startup.total_members} team members</div>
+                    <Link to={`/dashboard/startups/${startup.id}`}>
+                      <Button variant="outline" size="sm">
+                        View Details
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   )
 }

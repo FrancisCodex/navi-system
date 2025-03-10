@@ -32,6 +32,7 @@ const MentorsList = () => {
 
   useEffect(() => {
     viewAllMentors()
+    console.log(mentors)
   }, [viewAllMentors])
 
   const handleDialogClose = () => {
@@ -54,6 +55,7 @@ const MentorsList = () => {
   if (error) {
     return <div>Error: {error}</div>
   }
+
 
   return (
     <div className="flex min-h-screen flex-col">

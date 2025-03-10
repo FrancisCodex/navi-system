@@ -2,16 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import { useAuth } from './use-auth';
 import { toast } from 'sonner';
-
-interface Appointment {
-  id: string;
-  mentor_id: string;
-  incubateeName?: string;
-  mentorName?: string;
-  date: string;
-  requestedAt?: Date;
-  status?: "pending" | "accepted" | "declined" | "completed" | "cancelled";
-}
+import type { Appointment } from '@/constants/types';
 
 export const useAppointment = () => {
   const { user } = useAuth();
@@ -42,7 +33,27 @@ export const useAppointment = () => {
     fetchAppointments();
   }, [fetchAppointments]);
 
-  const createAppointment = useCallback(async (appointmentData: Omit<Appointment, 'id'>) => {
+  const fetchAppointmentForStartup = useCallback(async (startupProfileId: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axiosInstance.get(`/appointments/startup/${startupProfileId}`);
+      toast.success('Appointments for startup fetched successfully');
+      return response.data;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      toast.error('Failed to fetch appointments for startup');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const createAppointment = useCallback(async (appointmentData: Omit<Appointment, 'id' | 'incubateeName' | 'mentorName' | 'mentor_expertise' | 'requestedAt' | 'status'>) => {
     setLoading(true);
     setError(null);
 
@@ -104,6 +115,28 @@ export const useAppointment = () => {
     }
   }, []);
 
+  const cancelAppointment = useCallback(async (appointmentId: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await axiosInstance.put(`/appointments/cancel/${appointmentId}`, { status: 'cancelled' });
+      setAppointments((prevAppointments) => prevAppointments.map((appointment) => 
+        appointment.id === appointmentId ? { ...appointment, status: 'cancelled' } : appointment
+      ));
+      toast.success('Appointment cancelled successfully');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      toast.error('Failed to cancel appointment');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const viewAppointments = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -152,9 +185,11 @@ export const useAppointment = () => {
     loading,
     error,
     fetchAppointments,
+    fetchAppointmentForStartup,
     createAppointment,
     deleteAppointment,
     updateAppointment,
+    cancelAppointment,
     viewAppointments,
     viewAllAppointments,
   };

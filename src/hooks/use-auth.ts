@@ -37,17 +37,17 @@ export const useAuth = () => {
 
         fetchUser();
 
-        return () => {
-            setUser(null);
-        };
+        // return () => {
+        //     setUser(null);
+        // };
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const login = async (email: string, password: string, userType: string) => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await axios.post(`${API_BASE_URL}/login`, { email, password }, API_WITH_CREDENTIALS);
+            const response = await axios.post(`${API_BASE_URL}/login`, { email, password, user_type: userType }, API_WITH_CREDENTIALS);
             setUser(response.data.user);
             localStorage.setItem('token', response.data.token); // Store the token in localStorage
             toast.success('Login successful');
@@ -99,6 +99,23 @@ export const useAuth = () => {
             setLoading(false);
         }
     };
+
+    //register a incubatee user
+    const registerIncubatee = async (email: string, password: string, password_confirmation: string, name: string) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            await axios.post(`${API_BASE_URL}/register/incubatee`, { email, password, password_confirmation, name }, API_WITH_CREDENTIALS);
+            toast.success('Incubatee account created successfully');
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+            setError(errorMessage);
+            toast.error(`Incubatee registration failed: ${errorMessage}`);
+        } finally {
+            setLoading(false);
+        }
+    }
     
-    return { loading, error, user, login, logout, register };
+    return { loading, error, user, login, logout, register, registerIncubatee };
 }
