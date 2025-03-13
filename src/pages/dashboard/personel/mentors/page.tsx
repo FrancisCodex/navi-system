@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import MentorsForm from "@/components/MentorsAddForm"
 import { useMentor } from "@/hooks/create-mentor"
+import { DashboardHeader } from "@/components/dashboard-header"
 
 interface Mentor {
   id: string
@@ -58,36 +59,39 @@ const MentorsList = () => {
 
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col p-2 md:px-8 md:py-6">
       <div className="border-b">
-        <div className="flex h-16 items-center px-4 justify-between">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold">Incubatee Mentors</h1>
-            <Button variant="ghost" onClick={handleRefresh}>
-              <RefreshCcw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-            </Button>
-          </div>
-          
-          {/* Dialog Add Mentor */}
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Mentor
+      <DashboardHeader heading="Mentors" text="Manage all your mentors in one place.">
+          <div className="flex h-16 items-center px-4 gap-4 justify-between">
+            <div className="flex items-center">
+              <Button variant="ghost" onClick={handleRefresh}>
+                <RefreshCcw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
               </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Mentor</DialogTitle>
-                <DialogDescription>
-                  Add a new mentor to the list of mentors
-                </DialogDescription>
-              </DialogHeader>
-              <MentorsForm onSuccess={handleDialogClose} />
-            </DialogContent>
-          </Dialog>
-        </div>
+            </div>
+            
+            {/* Dialog Add Mentor */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="md:mr-2 h-4 w-4" />
+                  <span className="hidden md:block">Add New Mentor</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Mentor</DialogTitle>
+                  <DialogDescription>
+                    Add a new mentor to the list of mentors
+                  </DialogDescription>
+                </DialogHeader>
+                <MentorsForm onSuccess={handleDialogClose} />
+              </DialogContent>
+            </Dialog>
+          </div>     
+      </DashboardHeader>
+        
       </div>
+      {/*  */}
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {mentors && mentors.map((mentor: Mentor) => (

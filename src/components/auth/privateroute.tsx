@@ -11,9 +11,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, allowedRoles }) =>
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  console.log("PrivateRoute - Loading:", loading);
-  console.log("PrivateRoute - User:", user);
-
   if (loading) {
     return <Loading />;
   }

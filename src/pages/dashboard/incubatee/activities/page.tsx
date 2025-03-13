@@ -91,7 +91,7 @@ const ActivitiesIncubatee: React.FC = () => {
             key={activity.id}
             className="block transition-transform hover:scale-[1.02]"
           >
-            <Card className={`h-full ${activity.submitted ? 'bg-gray-200' : ''}`}>
+            <Card className={`h-full flex flex-col ${activity.submitted ? 'bg-gray-200' : ''}`}>
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-xl">{activity.activity_name}</CardTitle>
@@ -103,7 +103,7 @@ const ActivitiesIncubatee: React.FC = () => {
                   {activity.module} • {activity.session}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{activity.activity_description}</p>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center">

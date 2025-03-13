@@ -41,7 +41,7 @@ interface MentorCardProps {
     };
 }
 
-export function MentorCard({ mentor }: MentorCardProps) {
+export function     MentorCard({ mentor }: MentorCardProps) {
     const { deleteMentor, updateMentor, viewAllMentors } = useMentor();
     const [editMentorData, setEditMentorData] = useState(mentor);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -63,7 +63,7 @@ export function MentorCard({ mentor }: MentorCardProps) {
         e.preventDefault();
         await updateMentor(mentor.id, editMentorData);
         setIsDialogOpen(false); // Close the dialog
-        viewAllMentors(); // Refresh the mentor list
+        viewAllMentors(); // Refresh the mentor list    
     };
 
 

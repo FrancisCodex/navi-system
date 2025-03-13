@@ -43,7 +43,7 @@ const PrivateLayout = ({ children }: PrivateLayoutProps) => {
           </div>
           <DashNavbar />
         </header>
-        <div className="overflow-y-auto pt-16 md:pt-0 bg-zinc-50 dark:bg-background h-full">
+        <div className="overflow-y-auto pt-16 md:pt-0 dark:bg-background h-full">
           {children}
         </div>
       </SidebarInset>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
+import axiosInstance from '@/api/axiosInstance';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_WITH_CREDENTIALS = { withCredentials: true };
@@ -106,7 +107,7 @@ export const useAuth = () => {
         setError(null);
 
         try {
-            await axios.post(`${API_BASE_URL}/register/incubatee`, { email, password, password_confirmation, name }, API_WITH_CREDENTIALS);
+            await axiosInstance.post(`register/incubatee`, { email, password, password_confirmation, name });
             toast.success('Incubatee account created successfully');
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';

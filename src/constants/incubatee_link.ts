@@ -18,11 +18,6 @@ const IncubateeNavLinks = [
     icon: ClipboardEdit,
   },
   {
-    title: 'Mentors',
-    url: '/incubatees/mentors',
-    icon: BookOpen,
-  },
-  {
     title: 'My Startup',
     url: '/incubatees/myteam',
     icon: Egg,

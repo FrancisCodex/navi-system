@@ -79,6 +79,9 @@ export default function NewStartupPage() {
     )
   }
 
+  // Convert noStartupLeaders object to array
+  const leadersArray = Object.values(noStartupLeaders)
+
   return (
     <div className="p-4 md:p-10">
       <DashboardHeader heading="Add New Startup" text="Create a new startup profile">
@@ -138,8 +141,8 @@ export default function NewStartupPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {noStartupLeaders.length > 0 ? (
-                            noStartupLeaders.map((leader) => (
+                          {leadersArray.length > 0 ? (
+                            leadersArray.map((leader) => (
                               <SelectItem key={leader.id} value={leader.id.toString()}>
                                 {leader.name} ({leader.email})
                               </SelectItem>

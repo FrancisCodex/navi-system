@@ -1,64 +1,60 @@
-import React, { useEffect, useState, useMemo, Suspense } from "react";
+
+import React, { useEffect, useState, Suspense } from "react";
 import { LoaderCircle } from "lucide-react";
 import { AppointmentsList } from "@/components/dashboard/appointments-list";
 import { ActivityCard } from "@/components/dashboard/activity-card";
-import { useActivities } from "@/hooks/use-activities";
-import { useAppointment } from "@/hooks/use-appointment";
-import { useStartupProfile } from "@/hooks/use-startup-profile";
-import { useMentor } from "@/hooks/create-mentor";
+import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { DashboardHeader } from "@/components/dashboard-header";
 
 const AdminDashboardTabs = React.lazy(() => 
   import("@/components/dashboard/admin-dashboard-tabs").then(module => ({ default: module.default }))
 );
 
 const Dashboard = () => {
-  const { getActivitiesReport } = useActivities();
-  const { appointments, fetchAppointments } = useAppointment();
-  const { startupProfiles, fetchStartupProfiles } = useStartupProfile();
-  const { mentors, viewAllMentors } = useMentor();
-  const [combinedActivities, setCombinedActivities] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { fetchDashboardDetailsAdmin, loading, error } = useDashboardData();
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [startupProfiles, setStartupProfiles] = useState<any[]>([]);
+  const [mentors, setMentors] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
-        const [appointmentsData, startupProfilesData, mentorsData, activitiesReport] = await Promise.all([
-          fetchAppointments(),
-          fetchStartupProfiles(),
-          viewAllMentors(),
-          getActivitiesReport(),
-        ]);
-        setCombinedActivities(activitiesReport);
+        const data = await fetchDashboardDetailsAdmin();
+        setAppointments(data.appointments);
+        setActivities(data.activities);
+        setStartupProfiles(data.startupProfiles);
+        setMentors(data.mentors);
       } catch (error) {
         console.error("Error fetching dashboard data", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchData();
-  }, [fetchAppointments, fetchStartupProfiles, viewAllMentors, getActivitiesReport]);
+  }, [fetchDashboardDetailsAdmin]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-full">
         <LoaderCircle className="animate-spin h-6 w-6" />
       </div>
     );
   }
 
+  if (error) {
+    return <div className="text-red-500 text-center py-6">{error}</div>;
+  }
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="border-b">
-        <div className="flex h-16 items-center px-4">
-          <h1 className="ml-2 text-lg font-semibold">Dashboard</h1>
-        </div>
+    <div className="flex flex-col p-5">
+      <div className="border-b pb-4">
+      <DashboardHeader heading="Dashboard" text="Manage all your activities in one place." />
       </div>
       <div className="flex-1 space-y-4 p-8">
         <div className="grid gap-6 md:grid-cols-2">
           <AppointmentsList appointments={appointments} />
-          <ActivityCard activities={combinedActivities} />
+          <ActivityCard activities={activities} />
         </div>
       </div>
       <div className="p-8">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,12 +9,10 @@ import { TeamMemberCard } from "@/components/startupProfiles/team-member-card";
 import { AchievementTimeline } from "@/components/startupProfiles/achievement-timeline";
 import { DocumentList } from "@/components/startupProfiles/document-list";
 import { AppointmentList } from "@/components/startupProfiles/appointment-list";
+import { SubmittedActivityList } from "@/components/startupProfiles/activities-list";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
-import { useStartupProfile } from "@/hooks/use-startup-profile";
-import { useMembers } from "@/hooks/use-members";
-import { useAchievements } from "@/hooks/use-achievements";
-import { useDocuments } from "@/hooks/use-documents";
-import { useAppointment } from "@/hooks/use-appointment";
+import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { Separator } from "@/components/ui/separator";
 
 export default function StartupProfilePage() {
   const { id: startupProfileId } = useParams<{ id: string }>();
@@ -27,12 +25,9 @@ export default function StartupProfilePage() {
   const [achievements, setAchievements] = useState<any[]>([]);
   const [documents, setDocuments] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [submissions, setSubmissions] = useState<any[]>([]);
 
-  const { fetchStartupProfile } = useStartupProfile();
-  const { fetchMembers } = useMembers();
-  const { fetchAchievements } = useAchievements();
-  const { fetchDocuments } = useDocuments();
-  const { fetchAppointmentForStartup } = useAppointment();
+  const { fetchStartupProfiles } = useDashboardData();
 
   useEffect(() => {
     if (!startupProfileId) {
@@ -46,19 +41,14 @@ export default function StartupProfilePage() {
 
     const fetchData = async () => {
       try {
-        const [startupData, membersData, achievementsData, documentsData, appointmentData] = await Promise.all([
-          fetchStartupProfile(startupProfileId),
-          fetchMembers(startupProfileId),
-          fetchAchievements(startupProfileId),
-          fetchDocuments(startupProfileId),
-          fetchAppointmentForStartup(startupProfileId),
-        ]);
+        const data = await fetchStartupProfiles(startupProfileId);
 
-        setStartup(startupData);
-        setMembers(membersData);
-        setAchievements(achievementsData);
-        setDocuments(documentsData);
-        setAppointments(appointmentData);
+        setStartup(data.startup_profile);
+        setMembers(data.members);
+        setAchievements(data.achievements);
+        setDocuments(data.documents);
+        setAppointments(data.appointments);
+        setSubmissions(data.submissions);
       } catch (err) {
         setError("Failed to fetch data. Please try again.");
         console.error("Error fetching startup profile data:", err);
@@ -68,7 +58,7 @@ export default function StartupProfilePage() {
     };
 
     fetchData();
-  }, [startupProfileId, fetchStartupProfile, fetchMembers, fetchAchievements, fetchDocuments, fetchAppointmentForStartup]);
+  }, [startupProfileId, fetchStartupProfiles]);
 
   if (loading) {
     return (
@@ -103,7 +93,7 @@ export default function StartupProfilePage() {
             <CardTitle>Startup Overview</CardTitle>
             <CardDescription>Key information about {startup?.startup_name}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-1">
                 <div className="text-sm font-medium text-muted-foreground">Industry</div>
@@ -120,23 +110,37 @@ export default function StartupProfilePage() {
                 </div>
               </div>
             </div>
+
+            <Separator/>
+
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">Team Members</h3>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {members.map((member) => (
+                  <TeamMemberCard key={member.id} member={member} />
+                ))}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Startup Profile</CardTitle>
+          <CardDescription>Overview of your startup team</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-grow">
         <Tabs defaultValue="team">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="team">Team Members</TabsTrigger>
+          <TabsList className="grid w-fit grid-cols-4">
+            <TabsTrigger value="team">Activities</TabsTrigger>
             <TabsTrigger value="achievements">Achievements</TabsTrigger>
             <TabsTrigger value="appointments">Appointments</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
           </TabsList>
 
           <TabsContent value="team" className="mt-6">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {members.map((member) => (
-                <TeamMemberCard key={member.id} member={member} />
-              ))}
-            </div>
+            <SubmittedActivityList activities={submissions} />
           </TabsContent>
 
           <TabsContent value="achievements" className="mt-6">
@@ -151,6 +155,8 @@ export default function StartupProfilePage() {
             <DocumentList documents={documents} />
           </TabsContent>
         </Tabs>
+        </CardContent>
+        </Card>
       </div>
     </div>
   );

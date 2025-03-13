@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import axiosInstance from '@/api/axiosInstance';
-import { useAuth } from './use-auth';
+import { useAuth } from '@/context/AuthProvider';
 import { toast } from 'sonner';
-import type { Submission } from '@/constants/types';
+import type { Submission, SubmissionDetails } from '@/constants/types';
 
 interface CheckSubmissionResponse {
   file_url: null;
@@ -14,6 +14,8 @@ interface CheckSubmissionResponse {
 export const useSubmission = () => {
   const { user } = useAuth();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [submissionActivity, setSubmissionActivity] = useState<SubmissionDetails[]>([]);
+  const [submissionDetail, setSubmissionDetail] = useState<SubmissionDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -200,9 +202,60 @@ export const useSubmission = () => {
       }
   }, []);
 
+  const fetchSubmissionsForActivity = useCallback(async (activity_id: string) => {
+    setLoading(true);
+    setError(null);
+
+    try{
+      const response = await axiosInstance.get(`/submissions/activities/${activity_id}`);
+      setSubmissionActivity(response.data);
+    } catch (err) {
+      const errorMessage = (err as any).response?.data?.message || 'An unknown error occurred';
+      setError(errorMessage);
+      toast.error(`Failed to fetch submissions: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchSubmissionForActivity = useCallback(async (submission_id: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axiosInstance.get(`/submissions/activity/${submission_id}`);
+      console.log(response.data);
+      setSubmissionDetail(response.data);
+    } catch (err) {
+      const errorMessage = (err as any).response?.data?.message || 'An unknown error occurred';
+      setError(errorMessage);
+      toast.error(`Failed to fetch submissions: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const gradeSubmission = useCallback(async (submission_id: string, gradeData: { grade: boolean }) => {
+    setLoading(true);
+    setError(null);
+
+    console.log(gradeData);
+    try {
+      await axiosInstance.put(`/submissions/grade/${submission_id}`, gradeData);
+      toast.success('Submission graded successfully');
+    } catch (err) {
+      const errorMessage = (err as any).response?.data?.message || 'An unknown error occurred';
+      setError(errorMessage);
+      toast.error(`Failed to grade submission: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   return {
     submissions,
+    submissionActivity,
+    submissionDetail,
     loading,
     error,
     fetchSubmissions,
@@ -211,5 +264,8 @@ export const useSubmission = () => {
     deleteSubmission,
     checkUserSubmission,
     downloadSubmission,
+    fetchSubmissionsForActivity,
+    fetchSubmissionForActivity,
+    gradeSubmission,
   };
 };

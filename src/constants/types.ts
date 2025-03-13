@@ -9,17 +9,22 @@ export interface Mentor {
     phoneNumber?: string; // phoneNumber is optional
   }
 
-export interface Achievement {
+  export interface Achievement {
     id: string;
     competition_name: string;
     organized_by: string;
     prize_amount: number;
     category?: string;
+    startup_profile_id: string;
     description?: string;
     event_location?: string;
     article_link?: string;
-    photos?: string[];
-}
+    photos?: File[]; // Updated to File[]
+    achievement_photos?: string[];
+    date_achieved: string;
+    created_at?: Date;
+    startup_name?: string;
+  }
 
 export interface Activity {
     id: string;
@@ -31,6 +36,7 @@ export interface Activity {
     TBI: string;
     due_date: Date;
     file?: File;
+    
   }
 
 export interface Appointment {
@@ -50,11 +56,25 @@ export interface DashboardData {
     loading: boolean;
   }
 
+interface DocumentFiles{
+  file_path: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+}
+
 export interface Document {
     id: string;
     dti_registration: File;
     bir_registration: File;
     sec_registration: File;
+    dti_registration_file_path?: string;
+    dti_registration_file_name?: string;
+    bir_registration_file_path?: string;
+    bir_registration_file_name?: string;
+    sec_registration_file_path?: string;
+    sec_registration_file_name?: string;
+    files: DocumentFiles[];
 }
 
 export interface Incubatees{
@@ -105,4 +125,16 @@ export interface StartupGroup {
     industry: string;
     total_members?: string;
     leader_name?: string;
+}
+
+export interface SubmissionDetails {
+    id: string;
+    activity_id: string;
+    submission_date: Date;
+    file_path: string;
+    activity_name: string;
+    graded: boolean;
+    user_id: string;
+    leader_name: string;
+    startup_name: string;
 }

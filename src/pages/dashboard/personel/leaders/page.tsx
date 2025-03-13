@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,7 @@ export default function LeadersPage() {
   const [leaders, setLeaders] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchLeaders = async () => {
@@ -42,7 +43,7 @@ export default function LeadersPage() {
   if(loading){
     return (
       <div className="flex items-center justify-center h-full">
-        <LoaderCircle className="h-6 w-6 text-primary" />
+        <LoaderCircle className="h-6 w-6 animate-spin" />
       </div>
     );
   }
@@ -50,7 +51,7 @@ export default function LeadersPage() {
   return (
     <div className="p-10">
       <DashboardHeader heading="Startup Leaders" text="Manage all incubate leaders and their startups">
-        <Link to="new">
+        <Link to="/dashboard/leaders/new" state={{ from: location.pathname }}>
           <Button>
             <UserPlus className="mr-2 h-4 w-4" />
             Add Leader

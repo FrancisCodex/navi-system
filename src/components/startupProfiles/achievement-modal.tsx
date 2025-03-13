@@ -1,24 +1,9 @@
-"use client"
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Award, Calendar, ChevronLeft, ChevronRight, MapPin, LinkIcon, User, Clock } from "lucide-react"
 import { useState } from "react"
-
-export interface Achievement {
-    id: string
-    title: string
-    description: string
-    date: string
-    category: "Funding" | "Award" | "Milestone" | "Partnership" | "Other"
-    location?: string
-    team?: string
-    impact?: string
-    link?: string
-    addedDate?: string
-    photos?: string[]
-  }
+import { Achievement } from "@/constants/types"
 
 interface AchievementModalProps {
   achievement: Achievement | null
@@ -27,11 +12,9 @@ interface AchievementModalProps {
 
 export function AchievementModal({ achievement, onClose }: AchievementModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  // Early return if no achievement selected
   if (!achievement) return null
 
-  const photos = achievement.photos || []
+  const photos = achievement.achievement_photos || []
 
   const nextImage = () => {
     if (photos.length > 0) {
@@ -48,30 +31,35 @@ export function AchievementModal({ achievement, onClose }: AchievementModalProps
   return (
     <Dialog open={!!achievement} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-auto">
-        <DialogHeader>
+        <DialogHeader className="pt-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Badge variant="outline">{achievement.category}</Badge>
-              <DialogTitle>{achievement.title}</DialogTitle>
+              <Badge>{achievement.category}</Badge>
+              <DialogTitle>{achievement.competition_name}</DialogTitle>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              <span>{new Date(achievement.date).toLocaleDateString()}</span>
+              <span>{new Date(achievement.date_achieved).toLocaleDateString()}</span>
             </div>
           </div>
           <DialogDescription className="flex items-center gap-2 pt-2">
-            {achievement.location && (
+            {achievement.event_location && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <MapPin className="h-3 w-3" />
-                <span>{achievement.location}</span>
+                <span>{achievement.event_location}</span>
               </div>
             )}
-            {achievement.team && (
+            {achievement.startup_name && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <User className="h-3 w-3" />
-                <span>{achievement.team}</span>
+                <span>{achievement.startup_name}</span>
               </div>
             )}
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <span>
+                {achievement.prize_amount && `₱${achievement.prize_amount.toLocaleString()}`}
+              </span>
+            </div>
           </DialogDescription>
         </DialogHeader>
 
@@ -80,9 +68,9 @@ export function AchievementModal({ achievement, onClose }: AchievementModalProps
           <div className="relative my-4">
             <div className="aspect-video relative rounded-lg overflow-hidden bg-muted">
               <img
-                src={photos[currentImageIndex] || "/placeholder.svg"}
+                src={`http://127.0.0.1:8000${photos[currentImageIndex]}`} // ✅ Use URL directly
                 alt={`Achievement photo ${currentImageIndex + 1}`}
-                className="object-cover"
+                className="object-cover w-full h-full"
               />
 
               {/* Navigation buttons */}
@@ -123,18 +111,11 @@ export function AchievementModal({ achievement, onClose }: AchievementModalProps
             <p className="text-sm text-muted-foreground">{achievement.description}</p>
           </div>
 
-          {achievement.impact && (
-            <div className="border rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-2">Impact</h4>
-              <p className="text-sm text-muted-foreground">{achievement.impact}</p>
-            </div>
-          )}
-
-          {achievement.link && (
+          {achievement.article_link && (
             <div className="mt-4 flex items-center gap-2">
               <LinkIcon className="h-4 w-4 text-muted-foreground" />
               <a
-                href={achievement.link}
+                href={achievement.article_link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-primary hover:underline"
@@ -151,7 +132,7 @@ export function AchievementModal({ achievement, onClose }: AchievementModalProps
             </div>
             <div className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              <span>Added on {new Date(achievement.addedDate || achievement.date).toLocaleDateString()}</span>
+              <span>Added on {new Date(achievement.created_at || achievement.date_achieved).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -159,4 +140,3 @@ export function AchievementModal({ achievement, onClose }: AchievementModalProps
     </Dialog>
   )
 }
-

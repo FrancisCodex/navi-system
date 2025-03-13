@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -36,6 +36,7 @@ const defaultValues: Partial<LeaderFormValues> = {
 
 export default function NewLeaderPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { registerIncubatee } = useAuth()
 
@@ -61,10 +62,12 @@ export default function NewLeaderPage() {
     }
   }
 
+  const backLink = location.state?.from === "/dashboard/startups" ? "/dashboard/startups" : "/dashboard/leaders"
+
   return (
     <div className="p-10">
       <DashboardHeader heading="Create Leader Account" text="Add a new incubate leader to the platform">
-        <Link to="/dashboard/leaders">
+        <Link to={backLink}>
           <Button variant="outline" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>

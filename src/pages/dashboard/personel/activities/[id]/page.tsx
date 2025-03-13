@@ -1,68 +1,77 @@
-import { useState, useEffect } from "react"
-import { useParams, Link } from "react-router-dom"
-import { format } from "date-fns"
-import { Calendar, Clock, Download, FileText, User, Book, Layers, LoaderCircle } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { useActivities } from "@/hooks/use-activities"
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { format } from "date-fns";
+import { Calendar, Clock, Download, FileText, User, Book, Layers, LoaderCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { useActivities } from "@/hooks/use-activities";
+import EditActivityForm from "@/components/edit-activity-form";
 
 export function ActivityDetail() {
-  const { id } = useParams<{ id: string }>()
-  const { fetchActivityById, checkTotalStudentSubmitted } = useActivities()
-  const [activity, setActivity] = useState<any>(null)
-  const [downloading, setDownloading] = useState(false)
-  const [submissionData, setSubmissionData] = useState<{ total_incubatees: number, total_submissions: number } | null>(null)
+  const { id } = useParams<{ id: string }>();
+  const { fetchActivityById, checkTotalStudentSubmitted } = useActivities();
+  const [activity, setActivity] = useState<any>(null);
+  const [downloading, setDownloading] = useState(false);
+  const [submissionData, setSubmissionData] = useState<{ total_incubatees: number, total_submissions: number } | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchActivity = async () => {
       if (id) {
-        const activityData = await fetchActivityById(id)
-        setActivity(activityData)
+        const activityData = await fetchActivityById(id);
+        setActivity(activityData);
       }
-    }
-    fetchActivity()
-  }, [id, fetchActivityById])
+    };
+    fetchActivity();
+  }, [id, fetchActivityById]);
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
       if (id) {
-        const data = await checkTotalStudentSubmitted(id)
-        setSubmissionData(data)
+        const data = await checkTotalStudentSubmitted(id);
+        setSubmissionData(data);
       }
-    }
-    fetchSubmissionData()
-  }, [id, checkTotalStudentSubmitted])
+    };
+    fetchSubmissionData();
+  }, [id, checkTotalStudentSubmitted]);
 
   const handleDownload = async () => {
-    setDownloading(true)
+    setDownloading(true);
     try {
       // In a real app, you would download the file from your API
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // toast({
-      //   title: "File downloaded",
-      //   description: `${activity.file.name} has been downloaded successfully.`,
-      // })
+      await new Promise((resolve) => setTimeout(resolve, 1500));
     } catch (error) {
-      // toast({
-      //   title: "Download failed",
-      //   description: "The file could not be downloaded. Please try again.",
-      //   variant: "destructive",
-      // })
+      console.error("Download failed:", error);
     } finally {
-      setDownloading(false)
+      setDownloading(false);
     }
-  }
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    if (id) {
+      fetchActivityById(id).then(setActivity); // Refresh the activity details
+    }
+  };
 
   if (!activity) {
-    return <div className="flex justify-center items-center h-64">
-    <LoaderCircle className="animate-spin h-6 w-6" />
-  </div>
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoaderCircle className="animate-spin h-6 w-6" />
+      </div>
+    );
   }
 
-  const submissionPercentage = submissionData ? Math.round((submissionData.total_submissions / submissionData.total_incubatees) * 100) : 0
+  const submissionPercentage = submissionData ? Math.round((submissionData.total_submissions / submissionData.total_incubatees) * 100) : 0;
 
   return (
     <div className="grid gap-6 p-10">
@@ -157,9 +166,22 @@ export function ActivityDetail() {
         </div>
       </div>
       <div className="flex w-full flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
-        <Button variant="outline" size="sm" asChild>
-          <Link to={`/activities/${activity.id}/edit`}>Edit Activity</Link>
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              Edit Activity
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Activity</DialogTitle>
+              <DialogDescription>
+                Edit the details of the activity.
+              </DialogDescription>
+            </DialogHeader>
+            <EditActivityForm activity={activity} onSuccess={handleDialogClose} />
+          </DialogContent>
+        </Dialog>
         <Button size="sm" asChild>
           <Link to={`/activities/${activity.id}/submissions`}>
             <FileText className="mr-2 h-4 w-4" />
@@ -168,5 +190,5 @@ export function ActivityDetail() {
         </Button>
       </div>
     </div>
-  )
+  );
 }

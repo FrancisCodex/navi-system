@@ -24,6 +24,9 @@ import StartupProfiles from './pages/dashboard/personel/startupProfiles/page'
 import StartupProfilePage from './pages/dashboard/personel/startupProfiles/[id]/page'
 import LeadersPage from './pages/dashboard/personel/leaders/page'
 import NewLeaderPage from './pages/dashboard/personel/leaders/new/page'
+import SubmissionsPage from './pages/dashboard/personel/activities/submissions/page'
+import MyStartupProfile from './pages/dashboard/incubatee/myteam/page'
+import SubmissionDetailPage from './pages/dashboard/personel/activities/submissions/[id]/page'
 
 function App() {
   return (
@@ -46,8 +49,8 @@ function App() {
                 <Route path='/add/mentors' element={<PrivateRoute element={<AddMentors/>} allowedRoles={['admin']} />}/>
                 {/* Activities Route */}
                 <Route path='/activities/:id' element={<PrivateRoute element={<ActivityDetail/>} allowedRoles={['admin']} />}/>
-                <Route path='/activities/submissions' element={<PrivateRoute element={<h1>Submissions</h1>} allowedRoles={['admin']} />}/>
-                <Route path='/activities/submissions/:id' element={<PrivateRoute element={<h1>Submission Details</h1>} allowedRoles={['admin']} />}/>
+                <Route path='/activities/submissions/:id' element={<PrivateRoute element={<SubmissionsPage/>} allowedRoles={['admin']} />}/>
+                <Route path='/activities/submissions/grade/:submissionId' element={<PrivateRoute element={<SubmissionDetailPage/>} allowedRoles={['admin']} />}/>
 
                 {/* Startup Routes */}
                 <Route path='/startups' element={<PrivateRoute element={<StartupProfiles/>} allowedRoles={['admin']} />}/>
@@ -68,10 +71,9 @@ function App() {
               <Routes>
                 <Route path='/' element={<PrivateRoute element={<IncubateeDashboard/>} allowedRoles={['incubatee']}/>}/>
                 <Route path='/appointments' element={<PrivateRoute element={<SetAppointments/>} allowedRoles={['incubatee']}/>}/>
-                <Route path='/mentors' element={<PrivateRoute element={<h1>Building</h1>} allowedRoles={['incubatee']}/>}/>
                 <Route path='/activities' element={<PrivateRoute element={<ActivitiesIncubatee/>} allowedRoles={['incubatee']}/> }/>
                 <Route path='/activities/:id' element={<PrivateRoute element={<ActivityDetails/>} allowedRoles={['incubatee']}/>}/>
-                <Route path='/myteam' element={<PrivateRoute element={<div>h1</div>} allowedRoles={['incubatee']}/>}/>
+                <Route path='/myteam' element={<PrivateRoute element={<MyStartupProfile/>} allowedRoles={['incubatee']}/>}/>
               </Routes>
             </PrivateLayout>}
           />

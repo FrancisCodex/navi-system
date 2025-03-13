@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { useAuth } from '@/context/AuthProvider'
 import { useNavigate } from "react-router-dom"
+import NavigatuLogo from '@/assets/navigatu_logo.png'
+import NavigatuIconLogo from '@/assets/navigatu_icon_logo.png'
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   navLinks: any[]
@@ -29,11 +31,11 @@ export function AppSidebar({ navLinks, ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="flex items-center justify-center">
         {state === "collapsed" ? (
-          <h1>NAV</h1> 
+          <img src={NavigatuIconLogo} alt="Navigato Logo" className="w-full" />
         ) : (
-          <h1>Navigatu</h1>
+          <img src={NavigatuLogo} alt="Navigato Logo" className="w-44" />
         )}
       </SidebarHeader>
       <SidebarContent>

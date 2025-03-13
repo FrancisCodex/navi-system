@@ -3,20 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Award, Calendar } from "lucide-react"
 import { AchievementModal } from "./achievement-modal"
-
-interface Achievement {
-  id: string
-  title: string
-  description: string
-  date: string
-  category: "Funding" | "Award" | "Milestone" | "Partnership" | "Other"
-  location?: string
-  team?: string
-  impact?: string
-  link?: string
-  addedDate?: string
-  photos?: string[]
-}
+import { Achievement } from "@/constants/types"
 
 interface AchievementTimelineProps {
   achievements: Achievement[]
@@ -26,8 +13,9 @@ export function AchievementTimeline({ achievements }: AchievementTimelineProps) 
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null)
 
   // Sort achievements by date (newest first)
-  const sortedAchievements = [...achievements].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const sortedAchievements = [...achievements].sort((a, b) => new Date(b.date_achieved).getTime() - new Date(a.date_achieved).getTime())
 
+  console.log(selectedAchievement)
   return (
     <div className="space-y-8">
       <h3 className="text-lg font-medium">Startup Journey</h3>
@@ -48,10 +36,10 @@ export function AchievementTimeline({ achievements }: AchievementTimelineProps) 
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-base">{achievement.title}</CardTitle>
+                      <CardTitle className="text-base">{achievement.competition_name}</CardTitle>
                       <CardDescription className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        <span>{new Date(achievement.date).toLocaleDateString()}</span>
+                        <span>{new Date(achievement.date_achieved).toLocaleDateString()}</span>
                       </CardDescription>
                     </div>
                     <Badge variant="outline">{achievement.category}</Badge>

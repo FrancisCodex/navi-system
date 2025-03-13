@@ -1,10 +1,10 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { format } from "date-fns"
-import { Calendar, Edit, Eye, FileText, MoreHorizontal, Trash } from "lucide-react"
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { format } from "date-fns";
+import { Calendar, Edit, Eye, FileText, MoreHorizontal, Trash } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,39 +12,39 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { toast } from "@/hooks/use-toast"
-import type { Activity } from "@/constants/types"
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { Badge } from "@/components/ui/badge";
+import type { Activity } from "@/constants/types";
+import { useActivities } from "@/hooks/use-activities";
 
 interface ActivityListProps {
   activities: Activity[];
 }
 
 export function ActivityList({ activities }: ActivityListProps) {
-  const [isDeleting, setIsDeleting] = useState<string | null>(null)
-  console.log(activities)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const { deleteActivity } = useActivities();
+
   const handleDelete = async (id: string) => {
-    setIsDeleting(id)
-
-    try {
-      // In a real app, you would call your API to delete the activity
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      toast({
-        title: "Activity deleted",
-        description: "The activity has been deleted successfully.",
-      })
-    } catch (error) {
-      toast({
-        title: "Something went wrong.",
-        description: "The activity could not be deleted. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsDeleting(null)
-    }
-  }
+    setIsDeleting(id);
+    await deleteActivity(id);
+    // Refresh the page
+    window.location.reload();
+    setIsDeleting(null);
+  };
+  
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -82,14 +82,31 @@ export function ActivityList({ activities }: ActivityListProps) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => handleDelete(activity.id)}
-                    disabled={isDeleting === activity.id}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash className="mr-2 h-4 w-4" />
-                    {isDeleting === activity.id ? "Deleting..." : "Delete"}
-                  </DropdownMenuItem>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        <Trash className="mr-2 h-4 w-4" />
+                        {isDeleting === activity.id ? "Deleting..." : "Delete"}
+                      </DropdownMenuItem>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the activity.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDelete(activity.id)}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -126,10 +143,6 @@ export function ActivityList({ activities }: ActivityListProps) {
           <CardFooter className="border-t pt-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center">
-                {/* Commenting out the total submissions for now */}
-                {/* <Badge variant="outline" className="mr-2">
-                  {activity.submissionsCount}/{activity.totalStudents} Submissions
-                </Badge> */}
                 <Badge
                   variant={
                     new Date(activity.due_date) < new Date()
@@ -154,5 +167,5 @@ export function ActivityList({ activities }: ActivityListProps) {
         </Card>
       ))}
     </div>
-  )
+  );
 }

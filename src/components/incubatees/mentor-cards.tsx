@@ -1,9 +1,8 @@
 import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useMentor } from "@/hooks/create-mentor"
 import { AppointmentBooking } from "./appointment-booking"
 import type { Mentor } from "@/constants/types"
 
@@ -13,7 +12,6 @@ interface MentorCardProps {
 }
 
 export function IncubateeMentorList({ mentor, onBookingSuccess }: MentorCardProps): JSX.Element {
-  const { viewAllMentors } = useMentor()
   const [isBookingOpen, setIsBookingOpen] = useState(false)
 
   const handleOpenBooking = () => {
@@ -41,7 +39,7 @@ export function IncubateeMentorList({ mentor, onBookingSuccess }: MentorCardProp
             <div>
               <div className="flex gap-2 flex-col md:flex-row justify-end items-center">
                 <Button onClick={handleOpenBooking}>
-                  <CalendarPlus /> Set Appointment
+                  <CalendarPlus /> <span className="hidden md:block">Set Appointment</span>
                 </Button>
               </div>
             </div>

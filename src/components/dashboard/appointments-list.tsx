@@ -9,13 +9,14 @@ interface AppointmentsListProps {
 }
 
 export function AppointmentsList({ appointments }: AppointmentsListProps) {
+  console.log(appointments)
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 flex flex-col">
       <CardHeader>
         <CardTitle>Recent Appointments</CardTitle>
         <CardDescription>Latest appointments made by startup group leaders</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex-grow">
         {appointments.map((appointment, index) => (
           <div key={index} className="flex items-start space-x-4">
             <div className="rounded-md bg-primary/10 p-2">
@@ -34,7 +35,7 @@ export function AppointmentsList({ appointments }: AppointmentsListProps) {
           </div>
         ))}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Link to="appointments" className="w-full">
           <Button variant="outline" className="w-full">
             View All Appointments

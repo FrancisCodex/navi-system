@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,7 @@ import { useStartupProfile } from "@/hooks/use-startup-profile"
 
 export default function StartupProfiles() {
   const { fetchStartupProfiles, loading, startupProfiles } = useStartupProfile()
+  const location = useLocation()
 
   useEffect(() => {
     fetchStartupProfiles()
@@ -18,7 +19,7 @@ export default function StartupProfiles() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex items-center justify-center h-full">
         <LoaderCircle className="animate-spin h-6 w-6" />
       </div>
     );
@@ -28,7 +29,7 @@ export default function StartupProfiles() {
     <div className="p-10">
       <DashboardHeader heading="Startup Groups" text="Manage all your startup groups in one place.">
         <div className="flex gap-2">
-          <Link to="/dashboard/leaders/new">
+          <Link to="/dashboard/leaders/new" state={{ from: location.pathname }}>
             <Button variant="outline">
               <UserPlus className="mr-2 h-4 w-4" />
               Add Leader

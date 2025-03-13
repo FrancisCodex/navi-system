@@ -7,6 +7,7 @@ import { LoaderCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppointmentsListing } from "@/components/appointments/appointments";
 import { Separator } from "@/components/ui/separator"
+import { DashboardHeader } from "@/components/dashboard-header"
 
 
 export default function Appointments() {
@@ -41,11 +42,21 @@ export default function Appointments() {
     return <div>Error: {error}</div>
   }
 
+  if(loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <LoaderCircle className="animate-spin h-6 w-6" />
+      </div>
+    )
+  }
+
   console.log(appointments)
 
   return (
-    <div className="p-4">
-      <div className="grid grid-rows-1">
+    <div className="md:p-10">
+      <DashboardHeader heading="Appointments" text="Manage all your appointments in one place."/>
+
+      <div className="grid grid-rows-1 py-5">
         <div>
           <CalendarAppointment appointments={appointments} />
         </div>

@@ -25,12 +25,12 @@ interface ActivityCardProps {
 
 export function ActivityCard({ activities }: ActivityCardProps) {
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 flex flex-col">
       <CardHeader>
         <CardTitle>Activity Milestones</CardTitle>
         <CardDescription>Progress of startup groups completing required activities</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex-grow">
         {activities.map((activity, index) => (
           <div key={index} className="space-y-2">
             <div className="flex justify-between">
@@ -49,7 +49,7 @@ export function ActivityCard({ activities }: ActivityCardProps) {
           </div>
         ))}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Button asChild variant="outline" className="w-full">
           <Link to="activities">
             View All Activities

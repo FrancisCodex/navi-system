@@ -73,7 +73,7 @@ export const useDocuments = () => {
         setError(null);
 
         try {
-            const response = await axiosInstance.post(`/documents/${startupProfileId}`, documentData, {
+            const response = await axiosInstance.post(`/documents/upload/${startupProfileId}`, documentData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -94,7 +94,7 @@ export const useDocuments = () => {
         setError(null);
 
         try {
-            await axiosInstance.delete(`/documents/${documentId}`);
+            await axiosInstance.delete(`/documents/delete/${documentId}`);
             setDocuments((prevDocuments) => prevDocuments.filter((document) => document.id !== documentId));
             toast.success('Document deleted successfully');
         } catch (err) {

@@ -113,7 +113,7 @@ export function AppointmentList({ appointments }: AppointmentListProps) {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback>{appointment.mentorName.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>{appointment.mentorName?.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-medium">{appointment.mentorName}</div>
