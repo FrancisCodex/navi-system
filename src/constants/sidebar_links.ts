@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, BookOpen, Settings2, ClipboardEdit, Book } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, User, ClipboardEdit, Book } from 'lucide-react';
 
 const SidebarLinks = [
   {
@@ -8,14 +8,19 @@ const SidebarLinks = [
     isActive: true,
   },
   {
-    title: 'Incubatees',
-    url: '/dashboard/incubatees',
+    title: 'Startups',
+    url: '/dashboard/startups',
     icon: Users,
   },
   {
+    title: 'Leaders',
+    url: '/dashboard/leaders',
+    icon: User,
+  },
+  {
     title: 'Activities',
-    url: '/dashboard/activities',
     icon: Book,
+    url: '/dashboard/activities',
   },
   {
     title: 'Appointments',

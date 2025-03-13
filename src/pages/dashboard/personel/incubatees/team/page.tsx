@@ -12,17 +12,17 @@ import { TeamMembers } from "@/components/team-members"
 const team = {
   id: 1,
   name: "Team Alpha",
-  project: "Mathematics Research Group",
-  description: "Advanced mathematics research and problem-solving group",
+  project: "Start up 1",
+  description: "Building an app to help students with their homework",
   leader: {
     name: "John Smith",
     role: "Team Leader",
-    grade: "12th Grade",
+    grade: "CEO",
     image: "/placeholder.svg?height=40&width=40",
   },
   advisor: {
-    name: "Dr. Smith",
-    subject: "Mathematics",
+    name: "Michael Smith",
+    subject: "Globe",
     image: "/placeholder.svg?height=40&width=40",
   },
   members: [
@@ -30,28 +30,28 @@ const team = {
       id: 1,
       name: "John Smith",
       role: "Leader",
-      grade: "12th Grade",
+      grade: "CEO",
       image: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 2,
       name: "Sarah Johnson",
       role: "Member",
-      grade: "12th Grade",
+      grade: "CFO",
       image: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 3,
       name: "Michael Brown",
       role: "Member",
-      grade: "11th Grade",
+      grade: "CTO",
       image: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 4,
       name: "Emily Davis",
       role: "Member",
-      grade: "11th Grade",
+      grade: "CTO",
       image: "/placeholder.svg?height=40&width=40",
     },
   ],
@@ -107,8 +107,8 @@ export default function TeamPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Teacher Advisor</CardTitle>
-              <CardDescription>Supervising teacher</CardDescription>
+              <CardTitle>Mentor Advisor</CardTitle>
+              <CardDescription>Supervising Mentor</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center space-x-4">

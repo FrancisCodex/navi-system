@@ -1,25 +1,25 @@
-import type React from "react"
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import React, { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { useMentor } from "@/hooks/create-mentor"
+import type { Mentor } from "@/constants/types"
 
-interface Mentors {
-  name: string
-  organization: string
-  expertise: string
-  yearsOfExperience: string
+interface MentorsFormProps {
+  onSuccess: () => void
 }
 
-export default function MentorsForm() {
-  const [Mentorss, setMentorss] = useState<Mentors[]>([])
-  const [formData, setFormData] = useState<Mentors>({
-    name: "",
+export default function MentorsForm({ onSuccess }: MentorsFormProps) {
+  const { createMentor } = useMentor()
+  const [formData, setFormData] = useState<Mentor>({
+    firstName: "",
+    lastName: "",
     organization: "",
     expertise: "",
-    yearsOfExperience: "",
+    yearsOfExperience: 0,
+    email: "",
+    phoneNumber: "",
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,18 +31,47 @@ export default function MentorsForm() {
     setFormData((prevData) => ({ ...prevData, expertise: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setMentorss((prevMentorss) => [...prevMentorss, formData])
-    setFormData({ name: "", organization: "", expertise: "", yearsOfExperience: "" })
+    await createMentor(formData)
+    setFormData({ firstName: "", lastName: "", organization: "", expertise: "", yearsOfExperience: 0, email: "", phoneNumber: "" })
+    onSuccess() // Call the onSuccess callback to close the dialog and refresh the mentor list
   }
 
   return (
-    <div className="mx-auto max-w-md">
+    <div className="w-full">
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex justify-between gap-5">
+            <div className="w-full">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
+            </div>
+            <div className="w-full">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleInputChange} required />
+            </div>
+          </div>
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">Phone</Label>
+            <Input
+              id="phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="organization">Organization</Label>
@@ -66,6 +95,8 @@ export default function MentorsForm() {
                 <SelectItem value="fullstack">Full Stack Development</SelectItem>
                 <SelectItem value="design">UI/UX Design</SelectItem>
                 <SelectItem value="devops">DevOps</SelectItem>
+                <SelectItem value="fintech">FinTech</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -82,10 +113,9 @@ export default function MentorsForm() {
             />
           </div>
           <Button type="submit" className="w-full">
-            Add Mentors
+            Add Mentor
           </Button>
         </form>
     </div>
   )
 }
-

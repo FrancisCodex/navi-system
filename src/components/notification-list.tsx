@@ -51,7 +51,7 @@ export function NotificationList() {
               </p>
             </div>
           </div>
-          <div className="flex gap-2 md:flex-row flex-col">
+          <div className="flex gap-2 lg:flex-row flex-col">
             <Button variant="destructive" size="sm">
               Decline
             </Button>

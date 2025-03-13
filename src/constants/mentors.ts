@@ -6,6 +6,7 @@ const mentors = [
       expertise: "AI, ML, Data Science",
       yearsofexperience: 5,
       email: "fr4nz@mail.com",
+      image: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 2,
@@ -14,6 +15,7 @@ const mentors = [
       expertise: "AI, ML, Data Science",
       yearsofexperience: 5,
       email: "johndoe@mail.com",
+      image: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 3,
@@ -22,6 +24,7 @@ const mentors = [
       expertise: "AI, ML, Data Science",
       yearsofexperience: 5,
       email: "Jane@mail.com",
+      image: "/placeholder.svg?height=40&width=40",
     },
   ];
   

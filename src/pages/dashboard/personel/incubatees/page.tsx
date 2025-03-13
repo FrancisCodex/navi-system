@@ -29,4 +29,4 @@ const IncubateeList = () => {
   )
 }
 
-export default IncubateeList
+export default IncubateeList;

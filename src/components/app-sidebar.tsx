@@ -1,21 +1,6 @@
 import * as React from "react"
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  LogOut,
-} from "lucide-react"
-
+import { LogOut } from "lucide-react"
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -25,69 +10,51 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import SidebarLinks from "@/constants/sidebar_links"
+import { useAuth } from '@/context/AuthProvider'
+import { useNavigate } from "react-router-dom"
+import NavigatuLogo from '@/assets/navigatu_logo.png'
+import NavigatuIconLogo from '@/assets/navigatu_icon_logo.png'
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  navLinks: any[]
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ navLinks, ...props }: AppSidebarProps) {
   const { state } = useSidebar()
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/')
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="flex items-center justify-center">
         {state === "collapsed" ? (
-          <h1>NAV</h1> ): 
-          (
-          <h1>Navigatu</h1>
-          )}
+          <img src={NavigatuIconLogo} alt="Navigato Logo" className="w-full" />
+        ) : (
+          <img src={NavigatuLogo} alt="Navigato Logo" className="w-44" />
+        )}
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={SidebarLinks} />
+        <NavMain items={navLinks} />
       </SidebarContent>
       <SidebarFooter>
-      {/* Logout Button */}
-      <div className="flex justify-center">
-        {
-          state === "collapsed" ? (
-            <a href="/">
-            <Button variant="ghost" size="icon" className="w-fit p-3">
+        {/* Logout Button */}
+        <div className="flex justify-center">
+          {state === "collapsed" ? (
+            <Button variant="ghost" size="icon" className="w-fit p-3" onClick={handleLogout}>
               <LogOut />
             </Button>
-            </a>
-
           ) : (
-            <a href="/">
-            <Button variant="ghost" size="icon" className="w-fit p-3">
+            <Button variant="ghost" size="icon" className="w-fit p-3" onClick={handleLogout}>
               <LogOut />
               Logout
             </Button>
-            </a>
-          )
-        }
-      </div>
+          )}
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

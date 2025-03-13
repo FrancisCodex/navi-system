@@ -17,7 +17,7 @@ interface TeamCardProps {
 
 export function TeamCard({ team }: TeamCardProps) {
   return (
-    <Card className="hover:bg-muted/50 transition-colors">
+    <Card className="hover:bg-muted/50 transition-colors hover:-translate-y-1.5 hover:transition">
       <CardHeader>
         <div className="flex items-center justify-between">
           <Avatar className="h-12 w-12">
