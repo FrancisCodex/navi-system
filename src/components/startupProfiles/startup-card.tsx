@@ -10,7 +10,7 @@ interface StartupCardProps {
     startup_name: string
     industry: string
     startup_description: string
-    status: "Active" | "Inactive"
+    status: string;
     total_members: string
   }
 }

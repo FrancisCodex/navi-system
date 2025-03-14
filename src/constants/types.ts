@@ -100,7 +100,7 @@ export interface StartupProfile {
     date_registered_dti?: Date | null;
     date_registered_bir?: Date | null;
     startup_founded: Date;
-    status: "Active" | "Inactive";
+    status: string;
     industry: string;
     total_members?: string;
     leader_name?: string;

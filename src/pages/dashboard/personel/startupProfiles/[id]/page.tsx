@@ -12,7 +12,19 @@ import { AppointmentList } from "@/components/startupProfiles/appointment-list";
 import { SubmittedActivityList } from "@/components/startupProfiles/activities-list";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
+import { useStartupProfile } from "@/hooks/use-startup-profile";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function StartupProfilePage() {
   const { id: startupProfileId } = useParams<{ id: string }>();
@@ -26,8 +38,10 @@ export default function StartupProfilePage() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [submissions, setSubmissions] = useState<any[]>([]);
+  const [status, setStatus] = useState<string>("");
 
   const { fetchStartupProfiles } = useDashboardData();
+  const { updateStartupProfile } = useStartupProfile();
 
   useEffect(() => {
     if (!startupProfileId) {
@@ -49,6 +63,7 @@ export default function StartupProfilePage() {
         setDocuments(data.documents);
         setAppointments(data.appointments);
         setSubmissions(data.submissions);
+        setStatus(data.startup_profile.status);
       } catch (err) {
         setError("Failed to fetch data. Please try again.");
         console.error("Error fetching startup profile data:", err);
@@ -59,6 +74,17 @@ export default function StartupProfilePage() {
 
     fetchData();
   }, [startupProfileId, fetchStartupProfiles]);
+
+  const handleStatusChange = async () => {
+    if (startupProfileId) {
+      await updateStartupProfile(startupProfileId, { status });
+      // Optionally, refetch the data to update the UI
+      const data = await fetchStartupProfiles(startupProfileId);
+      setStartup(data.startup_profile);
+      //reload the page
+      window.location.reload();
+    }
+  };
 
   if (loading) {
     return (
@@ -81,9 +107,32 @@ export default function StartupProfilePage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <Link to={`/dashboard/startups/edit/${startupProfileId}`}>
-            <Button>Edit Startup</Button>
-          </Link>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Edit Status</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Startup Status</DialogTitle>
+                <DialogDescription>Change the status of the startup.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Label htmlFor="status">Status</Label>
+                <select
+                  id="status"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleStatusChange}>Save</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </DashboardHeader>
 
@@ -111,7 +160,7 @@ export default function StartupProfilePage() {
               </div>
             </div>
 
-            <Separator/>
+            <Separator />
 
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-3">Team Members</h3>
@@ -125,37 +174,37 @@ export default function StartupProfilePage() {
           </CardContent>
         </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Startup Profile</CardTitle>
-          <CardDescription>Overview of your startup team</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-grow">
-        <Tabs defaultValue="team">
-          <TabsList className="grid w-fit grid-cols-4">
-            <TabsTrigger value="team">Activities</TabsTrigger>
-            <TabsTrigger value="achievements">Achievements</TabsTrigger>
-            <TabsTrigger value="appointments">Appointments</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
-          </TabsList>
+        <Card>
+          <CardHeader>
+            <CardTitle>Startup Profile</CardTitle>
+            <CardDescription>Overview of your startup team</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow">
+            <Tabs defaultValue="team">
+              <TabsList className="grid w-fit grid-cols-4">
+                <TabsTrigger value="team">Activities</TabsTrigger>
+                <TabsTrigger value="achievements">Achievements</TabsTrigger>
+                <TabsTrigger value="appointments">Appointments</TabsTrigger>
+                <TabsTrigger value="documents">Documents</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="team" className="mt-6">
-            <SubmittedActivityList activities={submissions} />
-          </TabsContent>
+              <TabsContent value="team" className="mt-6">
+                <SubmittedActivityList activities={submissions} />
+              </TabsContent>
 
-          <TabsContent value="achievements" className="mt-6">
-            <AchievementTimeline achievements={achievements} />
-          </TabsContent>
+              <TabsContent value="achievements" className="mt-6">
+                <AchievementTimeline achievements={achievements} />
+              </TabsContent>
 
-          <TabsContent value="appointments" className="mt-6">
-            <AppointmentList appointments={appointments} />
-          </TabsContent>
+              <TabsContent value="appointments" className="mt-6">
+                <AppointmentList appointments={appointments} />
+              </TabsContent>
 
-          <TabsContent value="documents" className="mt-6">
-            <DocumentList documents={documents} />
-          </TabsContent>
-        </Tabs>
-        </CardContent>
+              <TabsContent value="documents" className="mt-6">
+                <DocumentList documents={documents} />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
         </Card>
       </div>
     </div>

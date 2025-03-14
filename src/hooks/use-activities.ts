@@ -141,6 +141,49 @@ export const useActivities = () => {
     }
   }, []);
 
+  const downloadActivityFile = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.get(`/activities/activityfile/download/${id}`, {
+        responseType: "blob", // Required for binary file handling
+      });
+
+      // Get the file name from the Content-Disposition header
+      let fileName = "activity_file";
+      const contentDisposition = response.headers["content-disposition"];
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename="?(.+?)"?$/);
+        if (fileNameMatch) {
+          fileName = decodeURIComponent(fileNameMatch[1]); // Ensure correct decoding
+        }
+      }
+
+      // Create a Blob object with the correct MIME type
+      const blob = new Blob([response.data], { type: response.data.type });
+
+      // Create an object URL and trigger the download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success(`File "${fileName}" downloaded successfully`);
+    } catch (err) {
+      const errorMessage = (err as any).response?.data?.message || "An unknown error occurred";
+      setError(errorMessage);
+      toast.error(`Failed to download file: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     activities,
     loading,
@@ -151,6 +194,7 @@ export const useActivities = () => {
     updateActivity,
     deleteActivity,
     checkTotalStudentSubmitted,
-    getActivitiesReport
+    getActivitiesReport,
+    downloadActivityFile,
   };
 };

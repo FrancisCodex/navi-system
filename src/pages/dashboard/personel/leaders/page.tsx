@@ -13,16 +13,27 @@ import { useStartupProfile } from "@/hooks/use-startup-profile";
 
 export default function LeadersPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
+  const location = useLocation();
   const { fetchLeadersWithStartupProfile, loading } = useStartupProfile();
   const [leaders, setLeaders] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchLeaders = async () => {
-      const data = await fetchLeadersWithStartupProfile(currentPage);
+      const data = await fetchLeadersWithStartupProfile(currentPage, debouncedSearchQuery);
       if (data) {
         setLeaders(data.data);
         setTotalPages(data.last_page);
@@ -30,23 +41,15 @@ export default function LeadersPage() {
     };
 
     fetchLeaders();
-  }, [fetchLeadersWithStartupProfile, currentPage]);
+  }, [fetchLeadersWithStartupProfile, currentPage, debouncedSearchQuery]);
 
-  // Filter leaders based on search query
-  const filteredLeaders = leaders.filter(
-    (leader) =>
-      leader.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      leader.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      leader.startup_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
-  if(loading){
-    return (
-      <div className="flex items-center justify-center h-full">
-        <LoaderCircle className="h-6 w-6 animate-spin" />
-      </div>
-    );
-  }
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
 
   return (
     <div className="p-10">
@@ -68,7 +71,7 @@ export default function LeadersPage() {
               placeholder="Search leaders by name, email, or startup..."
               className="w-full pl-8"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
             />
           </div>
         </div>
@@ -76,7 +79,7 @@ export default function LeadersPage() {
         <Tabs defaultValue="grid" className="w-full">
           <div className="flex justify-between items-center">
             <div className="text-sm text-muted-foreground">
-              Showing <strong>{filteredLeaders.length}</strong> leaders
+              Showing <strong>{leaders.length}</strong> leaders
             </div>
             <TabsList>
               <TabsTrigger value="grid">Grid</TabsTrigger>
@@ -85,138 +88,160 @@ export default function LeadersPage() {
           </div>
 
           <TabsContent value="grid" className="mt-6">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredLeaders.map((leader) => (
-                <Card key={leader.id}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src={leader.avatar || `/placeholder.svg?height=40&width=40`} alt={leader.name} />
-                          <AvatarFallback>{leader.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <CardTitle className="text-base">{leader.name}</CardTitle>
-                          <div className="text-sm text-muted-foreground">{leader.role || "CEO"}</div>
+            {loading ? (
+              <div className="flex justify-center items-center h-32">
+                <LoaderCircle className="animate-spin h-6 w-6" />
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {leaders.map((leader) => (
+                  <Card key={leader.id}>
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={leader.avatar || `/placeholder.svg?height=40&width=40`} alt={leader.name} />
+                            <AvatarFallback>{leader.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <CardTitle className="text-base">{leader.name}</CardTitle>
+                            <div className="text-sm text-muted-foreground">{leader.role || "CEO"}</div>
+                          </div>
+                        </div>
+                        <Badge variant={leader.startup_status === "Active" ? "default" : "secondary"}>
+                          {leader.startup_status}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">{leader.startup_name}</span>
+                          <span className="text-xs text-muted-foreground">({leader.industry})</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <span>{leader.email}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <span>{leader.phone || "Not provided"}</span>
                         </div>
                       </div>
-                      <Badge variant={leader.startup_status === "Active" ? "default" : "secondary"}>
-                        {leader.startup_status}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Building className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">{leader.startup_name}</span>
-                        <span className="text-xs text-muted-foreground">({leader.industry})</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span>{leader.email}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span>{leader.phone || "Not provided"}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between pt-4">
-                    <Button variant="outline" size="sm" onClick={() => navigate(`/dashboard/startups/${leader.startupId}`)}>
-                      <Building className="mr-2 h-3.5 w-3.5" />
-                      View Startup
-                    </Button>
-                    <Button size="sm">Contact</Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-between pt-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/dashboard/startups/${leader.startupId}`)}
+                        disabled={!leader.startupId}
+                      >
+                        <Building className="mr-2 h-3.5 w-3.5" />
+                        View Startup
+                      </Button>
+                      <a href={`mailto:${leader.email}`}>
+                        <Button size="sm">Contact</Button>
+                      </a>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="list" className="mt-6">
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Leader</TableHead>
-                    <TableHead>Startup</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredLeaders.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center h-32">
+                <LoaderCircle className="animate-spin h-6 w-6" />
+              </div>
+            ) : (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
-                        No leaders found matching your search
-                      </TableCell>
+                      <TableHead>Leader</TableHead>
+                      <TableHead>Startup</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ) : (
-                    filteredLeaders.map((leader) => (
-                      <TableRow key={leader.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage
-                                src={leader.avatar || `/placeholder.svg?height=40&width=40`}
-                                alt={leader.name}
-                              />
-                              <AvatarFallback>{leader.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className="font-medium">{leader.name}</div>
-                              <div className="text-xs text-muted-foreground">{leader.role || "CEO"}</div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">{leader.startup_name}</div>
-                          <div className="text-xs text-muted-foreground">{leader.industry}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-1 text-sm">
-                              <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                              <span>{leader.email}</span>
-                            </div>
-                            <div className="flex items-center gap-1 text-sm">
-                              <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                              <span>{leader.phone || "Not provided"}</span>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={leader.startup_status === "Active" ? "default" : "secondary"}>
-                            {leader.startup_status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => navigate(`/dashboard/startups/${leader.startupId}`)}
-                            >
-                              View Startup
-                            </Button>
-                            <Button size="sm">Contact</Button>
-                          </div>
+                  </TableHeader>
+                  <TableBody>
+                    {leaders.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
+                          No leaders found matching your search
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                    ) : (
+                      leaders.map((leader) => (
+                        <TableRow key={leader.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage
+                                  src={leader.avatar || `/placeholder.svg?height=40&width=40`}
+                                  alt={leader.name}
+                                />
+                                <AvatarFallback>{leader.name.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium">{leader.name}</div>
+                                <div className="text-xs text-muted-foreground">{leader.role || "CEO"}</div>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium">{leader.startup_name}</div>
+                            <div className="text-xs text-muted-foreground">{leader.industry}</div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-1 text-sm">
+                                <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                                <span>{leader.email}</span>
+                              </div>
+                              <div className="flex items-center gap-1 text-sm">
+                                <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                                <span>{leader.phone || "Not provided"}</span>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={leader.startup_status === "Active" ? "default" : "secondary"}>
+                              {leader.startup_status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => navigate(`/dashboard/startups/${leader.startupId}`)}
+                                disabled={!leader.startupId}
+                              >
+                                View Startup
+                              </Button>
+                              <a href={`mailto:${leader.email}`}>
+                                <Button size="sm">Contact</Button>
+                              </a>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
         <div className="flex justify-between items-center mt-4">
           <Button
             variant="outline"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
             Previous
@@ -226,7 +251,7 @@ export default function LeadersPage() {
           </span>
           <Button
             variant="outline"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
             Next

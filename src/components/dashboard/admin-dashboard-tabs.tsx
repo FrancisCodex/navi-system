@@ -13,11 +13,11 @@ const AdminDashboardTabs = ({ startupGroups, mentors }: AdminDashboardTabsProps)
     <Card>
       <CardHeader>
         <Tabs defaultValue="startups" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-fit grid-cols-2">
             <TabsTrigger value="startups">Startup Groups</TabsTrigger>
             <TabsTrigger value="mentors">Mentors</TabsTrigger>
           </TabsList>
-          <CardContent className="pt-6">
+          <CardContent className="p-0 pt-6">
             <TabsContent value="startups" className="mt-0">
               <StartupGroupsTable startupGroups={startupGroups} />
             </TabsContent>

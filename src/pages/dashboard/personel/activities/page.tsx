@@ -62,7 +62,11 @@ const Activities = () => {
       </DashboardHeader>
 
       <div className="py-5">
-        <ActivityList activities={activities} />
+        {activities.length === 0 ? (
+          <div className="text-center text-muted-foreground">No Activities Assigned to Incubatees</div>
+        ) : (
+          <ActivityList activities={activities} />
+        )}
       </div>
     </div>
   );

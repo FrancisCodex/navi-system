@@ -85,7 +85,8 @@ export default function MentorsForm({ onSuccess }: MentorsFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="expertise">Expertise</Label>
-            <Select onValueChange={handleExpertiseChange} value={formData.expertise}>
+            <Input id="expertise" name="expertise" value={formData.expertise} onChange={handleInputChange} required/>
+            {/* <Select onValueChange={handleExpertiseChange} value={formData.expertise}>
               <SelectTrigger>
                 <SelectValue placeholder="Select expertise" />
               </SelectTrigger>
@@ -98,7 +99,7 @@ export default function MentorsForm({ onSuccess }: MentorsFormProps) {
                 <SelectItem value="fintech">FinTech</SelectItem>
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
           <div className="space-y-2">
             <Label htmlFor="yearsOfExperience">Years of Experience</Label>

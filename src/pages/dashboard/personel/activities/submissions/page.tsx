@@ -8,7 +8,7 @@ import { LoaderCircle } from "lucide-react";
 export default function SubmissionsPage() {
   const { id } = useParams<{ id: string }>();
   const { submissionActivity, loading, fetchSubmissionsForActivity } = useSubmission();
-
+  console.log(submissionActivity);
   useEffect(() => {
     if (id) {
         fetchSubmissionsForActivity(id);
@@ -28,7 +28,13 @@ export default function SubmissionsPage() {
   return (
     <div className="p-10">
       <DashboardHeader heading="Activity Submissions" text="View and grade student submissions for this activity." />
-      <SubmissionList submissions={submissionActivity} />
+      {submissionActivity ? (
+        <SubmissionList
+          submissions={submissionActivity}
+        />
+      ) : (
+        <div className="text-center text-muted-foreground">No submissions found for this activity.</div>
+      )}
     </div>
   );
 }

@@ -70,12 +70,6 @@ export function ActivityList({ activities }: ActivityListProps) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={`/dashboard/activities/${activity.id}/edit`}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
                     <Link to={`/dashboard/activities/submissions/${activity.id}`}>
                       <FileText className="mr-2 h-4 w-4" />
                       View Submissions
@@ -128,7 +122,7 @@ export function ActivityList({ activities }: ActivityListProps) {
                 <span className="text-sm">{activity.session}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Subject:</span>
+                <span className="text-sm font-medium">TBI:</span>
                 <span className="text-sm">{activity.TBI}</span>
               </div>
               <div className="flex items-center justify-between">

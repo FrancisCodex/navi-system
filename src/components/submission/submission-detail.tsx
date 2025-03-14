@@ -21,14 +21,15 @@ export function SubmissionDetail({ submission }: SubmissionDetailProps) {
   const [downloading, setDownloading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [grade, setGrade] = useState(submission.graded ? "true" : "false");
-  const { gradeSubmission } = useSubmission();
+  const { gradeSubmission, downloadSubmission } = useSubmission();
 
-  const handleDownload = async () => {
+  const handleDownload = async (e: React.FormEvent) => {
+    e.preventDefault();
     setDownloading(true);
 
     try {
       // In a real app, you would call your API to download the file
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await downloadSubmission(submission.id);
     } catch (error) {
       console.error("Error downloading file:", error);
     } finally {
@@ -51,7 +52,7 @@ export function SubmissionDetail({ submission }: SubmissionDetailProps) {
   };
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 pt-5">
       <Card>
         <CardHeader>
           <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">

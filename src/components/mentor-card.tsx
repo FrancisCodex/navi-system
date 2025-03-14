@@ -115,14 +115,14 @@ export function     MentorCard({ mentor }: MentorCardProps) {
                                 </DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleEditSubmit} className="grid gap-4 py-4">
-                                <div className="flex items-center justify-center gap-10">
-                                    <div>
+                                <div className="flex items-center justify-center gap-5">
+                                    <div className="w-full">
                                         <Label htmlFor="firstName" className="text-right">
                                             First Name
                                         </Label>
                                         <Input id="firstName" value={editMentorData.firstName} onChange={handleEditChange} className="col-span-3" />
                                     </div>
-                                    <div>
+                                    <div className="w-full">
                                         <Label htmlFor="lastName" className="text-right">
                                             Last Name
                                         </Label>
@@ -151,6 +151,14 @@ export function     MentorCard({ mentor }: MentorCardProps) {
                                             Organization
                                         </Label>
                                         <Input id="organization" value={editMentorData.organization} onChange={handleEditChange} className="w-full" />
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-center gap-10">
+                                    <div className="w-full">
+                                        <Label htmlFor="phoneNumber" className="text-right">
+                                            Expertise
+                                        </Label>
+                                        <Input id="expertise" value={editMentorData.expertise} onChange={handleEditChange} className="w-full" />
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-center gap-10">

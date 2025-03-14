@@ -15,6 +15,7 @@ export function AchievementModal({ achievement, onClose }: AchievementModalProps
   if (!achievement) return null
 
   const photos = achievement.achievement_photos || []
+  const API_URL = import.meta.env.VITE_API_BASE
 
   const nextImage = () => {
     if (photos.length > 0) {
@@ -68,7 +69,7 @@ export function AchievementModal({ achievement, onClose }: AchievementModalProps
           <div className="relative my-4">
             <div className="aspect-video relative rounded-lg overflow-hidden bg-muted">
               <img
-                src={`http://127.0.0.1:8000${photos[currentImageIndex]}`} // ✅ Use URL directly
+                src={`${API_URL}${photos[currentImageIndex]}`} // ✅ Use URL directly
                 alt={`Achievement photo ${currentImageIndex + 1}`}
                 className="object-cover w-full h-full"
               />

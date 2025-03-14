@@ -93,60 +93,63 @@ export function AchievementTabs({ achievements, startupProfileId }: AchievementP
           </Button>
         </div>
       </div>
-      <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-border">
-        {achievements.map((achievement) => (
+      {achievements.length === 0 ? (
+        <div className="text-sm text-muted-foreground">No Achievements Yet</div>
+      ) : (
+        <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-border">
+          {achievements.map((achievement) => (
             <div key={achievement.id} className="relative flex gap-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border bg-background shadow-sm">
-                    <Award className="h-5 w-5" />
-                </div>
-            <Card className="w-full">
-                <CardHeader className="pb-2" >
-                <div className="flex items-start justify-between">
-                <CardTitle>{achievement.competition_name}</CardTitle>
-                <div className="flex items-center justify-between gap-4">
-                    <div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border bg-background shadow-sm">
+                <Award className="h-5 w-5" />
+              </div>
+              <Card className="w-full">
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <CardTitle>{achievement.competition_name}</CardTitle>
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
                         <Button variant="outline" size="icon" onClick={() => handleCardClick(achievement)} className="w-full p-3">
-                            <BookOpenText/> 
-                            <span>Open</span>
+                          <BookOpenText />
+                          <span>Open</span>
                         </Button>
-                    </div>
-                    <div className="flex gap-4 rounded">
+                      </div>
+                      <div className="flex gap-4 rounded">
                         <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
-                        <AlertDialogTrigger asChild>
+                          <AlertDialogTrigger asChild>
                             <Button variant="destructive" size="icon" onClick={() => handleDeleteClick(achievement)}>
-                            <Trash />
+                              <Trash />
                             </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
                             <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
                                 This action cannot be undone. This will permanently delete the achievement.
-                            </AlertDialogDescription>
+                              </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
                             </AlertDialogFooter>
-                        </AlertDialogContent>
+                          </AlertDialogContent>
                         </AlertDialog>
+                      </div>
                     </div>
-                </div>
-                </div>
-                <CardDescription>
-                <span>{new Date(achievement.date_achieved).toLocaleDateString()}</span>
-                </CardDescription>
+                  </div>
+                  <CardDescription>
+                    <span>{new Date(achievement.date_achieved).toLocaleDateString()}</span>
+                  </CardDescription>
                 </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-2">
-                <p className="text-sm text-muted-foreground">{achievement.description}</p>
-              </div>
-            </CardContent>
-          </Card>
+                <CardContent>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
       {selectedAchievement && (
         <AchievementModal achievement={selectedAchievement} onClose={handleCloseModal} />
       )}
