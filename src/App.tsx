@@ -51,12 +51,10 @@ function App() {
                 <Route path='/activities/:id' element={<PrivateRoute element={<ActivityDetail/>} allowedRoles={['admin']} />}/>
                 <Route path='/activities/submissions/:id' element={<PrivateRoute element={<SubmissionsPage/>} allowedRoles={['admin']} />}/>
                 <Route path='/activities/submissions/grade/:submissionId' element={<PrivateRoute element={<SubmissionDetailPage/>} allowedRoles={['admin']} />}/>
-
                 {/* Startup Routes */}
                 <Route path='/startups' element={<PrivateRoute element={<StartupProfiles/>} allowedRoles={['admin']} />}/>
                 <Route path='/startups/:id' element={<PrivateRoute element={<StartupProfilePage/>} allowedRoles={['admin']} />}/>
                 <Route path='/startups/new' element={<PrivateRoute element={<NewStartupPage/>} allowedRoles={['admin']} />}/>
-
                 {/* Leaders Routes */}
                 <Route path='/leaders' element={<PrivateRoute element={<LeadersPage/>} allowedRoles={['admin']} />}/>
                 <Route path='/leaders/new' element={<PrivateRoute element={<NewLeaderPage/>} allowedRoles={['admin']} />}/>

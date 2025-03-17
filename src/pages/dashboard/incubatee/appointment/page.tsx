@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MyAppointments } from "@/components/incubatees/my-appointments"
 import { LoaderCircle } from "lucide-react"
 import { useAppointment } from "@/hooks/use-appointment"
+import { DashboardHeader } from "@/components/dashboard-header"
 
 interface Mentor {
   id: string
@@ -49,8 +50,8 @@ const SetAppointments = () => {
 
   return (
     <div className="p-10">
-      <h1 className="text-2xl font-bold mb-4">Book an Appointment with a Mentor</h1>
-      <Tabs defaultValue="book">
+      <DashboardHeader heading="Appointments" text="Book an Appointment with a mentor"/>
+      <Tabs defaultValue="book" className="pt-5">
         <TabsList>
           <TabsTrigger value="book">Set Appointments</TabsTrigger>
           <TabsTrigger value="my-appointments">My Appointments</TabsTrigger>

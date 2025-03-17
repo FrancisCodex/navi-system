@@ -16,34 +16,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { SubmissionDetails } from "@/constants/types";
+import { useSubmission } from "@/hooks/use-submission";
 
 interface SubmissionListProps {
   submissions: SubmissionDetails[];
 }
 
 export function SubmissionList({ submissions }: SubmissionListProps) {
-  const [downloading, setDownloading] = useState<string | null>(null);
-  console.log(submissions);
-
-  const handleDownload = async (id: string, fileName: string) => {
-    setDownloading(id);
-
-    try {
-      // In a real app, you would call your API to download the file
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    } catch (error) {
-        console.error("Failed to download file", error);
-    } finally {
-      setDownloading(null);
-    }
-  };
 
   return (
-    <Card>
+    <Card className="pt-5">
       <CardHeader>
         <CardTitle>Student Submissions</CardTitle>
-        <CardDescription>{submissions.length} submissions received for the Activity: <Link to={`/dashboard/activities/${submissions?.[0]?.activity_id}`} className="font-black inline-block text-black hover:underline">"{submissions?.[0]?.activity_name}"</Link></CardDescription>
+        <CardDescription>
+          {submissions.length === 0 ? (
+            <div className="text-center text-muted-foreground">No submissions</div>
+          ) : (
+            <>
+              {submissions.length} submissions received for the Activity:{" "}
+              <Link to={`/dashboard/activities/${submissions?.[0]?.activity_id}`} className="font-black inline-block text-black hover:underline">
+                "{submissions?.[0]?.activity_name}"
+              </Link>
+            </>
+          )}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -100,16 +96,9 @@ export function SubmissionList({ submissions }: SubmissionListProps) {
                           View Details
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDownload(submission.id, submission.file_path.split('/').pop()!)}
-                        disabled={downloading === submission.id}
-                      >
-                        <Download className="mr-2 h-4 w-4" />
-                        {downloading === submission.id ? "Downloading..." : "Download"}
-                      </DropdownMenuItem>
                       {!submission.graded && (
                         <DropdownMenuItem asChild>
-                          <Link to={`/activities/${submission.activity_id}/submissions/${submission.id}?grade=true`}>
+                          <Link to={`/dashboard/activities/submissions/grade/${submission.id}`}>
                             <Check className="mr-2 h-4 w-4" />
                             Grade Submission
                           </Link>

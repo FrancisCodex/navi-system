@@ -42,8 +42,9 @@ export function MyAppointments({ appointments, onCancelAppointment }: MyAppointm
                   return <Badge variant='destructive' className="text-xs">Cancelled</Badge>
               }
           }
+          
   const renderAppointmentTable = (apps: Appointment[]) => (
-    <Table>
+    <Table className="border">
       <TableHeader>
         <TableRow>
           <TableHead>Mentor</TableHead>

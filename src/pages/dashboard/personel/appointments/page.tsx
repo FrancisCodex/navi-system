@@ -1,7 +1,5 @@
 import CalendarAppointment from "@/components/appointments/calendar-appointment"
 import { useEffect } from "react"
-import { AddEventForm } from "@/components/add-event-form"
-import { AppointmentList } from "@/components/appointments/appointment-list"
 import { useAppointment } from "@/hooks/use-appointment"
 import { LoaderCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -61,15 +59,6 @@ export default function Appointments() {
           <CalendarAppointment appointments={appointments} />
         </div>
         <div>
-          {/* <h1 className="text-2xl font-bold mb-4">Mentor Appointments</h1>
-          <AppointmentList
-            appointments={appointments}
-            onAcceptAppointment={handleAcceptAppointment}
-            onDeclineAppointment={handleDeclineAppointment}
-            onCompleteAppointment={handleCompleteAppointment}
-            onDeleteAppointment={handleDeleteAppointment}
-            onSendEmail={handleSendEmail}
-          /> */}
           <Card className="">
             <CardHeader className="flex flex-row justify-between">
               <div>

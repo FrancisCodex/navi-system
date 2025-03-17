@@ -8,6 +8,7 @@ import { LoaderCircle } from "lucide-react";
 export default function SubmissionDetailPage() {
   const { submissionId } = useParams<{ submissionId: string }>();
   const { fetchSubmissionForActivity, submissionDetail, loading, error } = useSubmission();
+  console.log(submissionDetail);
 
   useEffect(() => {
     if (submissionId) {

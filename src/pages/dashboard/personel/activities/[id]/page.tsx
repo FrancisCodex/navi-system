@@ -183,7 +183,7 @@ export function ActivityDetail() {
           </DialogContent>
         </Dialog>
         <Button size="sm" asChild>
-          <Link to={`/activities/${activity.id}/submissions`}>
+          <Link to={`/dashboard/activities/submissions/${activity.id}`}>
             <FileText className="mr-2 h-4 w-4" />
             View Submissions
           </Link>
